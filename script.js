@@ -52,12 +52,20 @@ const customIcon = L.icon({
 });
 
 // ==============================
-// LISTE
+// LISTES CATÉGORIES
 // ==============================
 
-const list = document.getElementById("locationList");
+const topList =
+  document.getElementById("topList");
 
-list.innerHTML = "";
+const bottomList =
+  document.getElementById("bottomList");
+
+const leftList =
+  document.getElementById("leftList");
+
+const rightList =
+  document.getElementById("rightList");
 
 // ==============================
 // SEARCH
@@ -75,14 +83,29 @@ const searchInput =
 
 const playableZone = [
 
-  [25, 1280],     // bas
+  [25, 1280],     // haut
 
   [960, 2420],    // droite
 
-  [1885, 1285],   // haut
+  [1885, 1285],   // bas
 
   [960, 140],     // gauche
-]
+
+];
+
+// ==============================
+// AFFICHAGE ZONE
+// ==============================
+
+L.polygon(playableZone, {
+
+  color: "orange",
+  weight: 2,
+
+  fillColor: "orange",
+  fillOpacity: 0.15
+
+}).addTo(map);
 
 // ==============================
 // TEST SI POINT DANS ZONE
@@ -119,6 +142,32 @@ function isInsideZone(x, y) {
   }
 
   return inside;
+}
+
+// ==============================
+// CATÉGORIES
+// ==============================
+
+const centerX = 1280;
+const centerY = 960;
+
+function getCategory(x, y) {
+
+  const dx = x - centerX;
+  const dy = y - centerY;
+
+  // gauche / droite
+  if (Math.abs(dx) > Math.abs(dy)) {
+
+    return dx > 0
+      ? "right"
+      : "left";
+  }
+
+  // haut / bas
+  return dy > 0
+    ? "bottom"
+    : "top";
 }
 
 // ==============================
@@ -179,7 +228,7 @@ locations.forEach(loc => {
   // filtre zone
   if (!isInsideZone(x, y)) return;
 
-  // Leaflet = [Y, X]
+  // coordonnées leaflet
   const leafletCoords = [y, x];
 
   // création marker
@@ -196,7 +245,7 @@ locations.forEach(loc => {
     </div>
   `);
 
-  // fonction focus
+  // focus marker
   function focusMarker() {
 
     map.flyTo(leafletCoords, 1, {
@@ -226,14 +275,44 @@ locations.forEach(loc => {
   // clic liste
   li.onclick = focusMarker;
 
-  // ajout liste
-  list.appendChild(li);
+  // catégorie
+  const category =
+    getCategory(x, y);
+
+  // ajout bonne catégorie
+  if (category === "top") {
+
+    topList.appendChild(li);
+
+  }
+
+  else if (category === "bottom") {
+
+    bottomList.appendChild(li);
+
+  }
+
+  else if (category === "left") {
+
+    leftList.appendChild(li);
+
+  }
+
+  else if (category === "right") {
+
+    rightList.appendChild(li);
+
+  }
 
   // sauvegarde marker
   allMarkers.push({
+
     marker,
     li,
-    name: loc.name.toLowerCase()
+
+    name:
+      loc.name.toLowerCase()
+
   });
 
 });
@@ -266,6 +345,29 @@ searchInput.addEventListener("input", () => {
       map.removeLayer(item.marker);
 
     }
+
+  });
+
+});
+
+// ==============================
+// CATÉGORIES REPLIABLES
+// ==============================
+
+const categoryTitles =
+  document.querySelectorAll(".categoryTitle");
+
+categoryTitles.forEach(title => {
+
+  title.addEventListener("click", () => {
+
+    const ul =
+      title.nextElementSibling;
+
+    ul.style.display =
+      ul.style.display === "none"
+      ? "block"
+      : "none";
 
   });
 
@@ -348,13 +450,17 @@ map.on('click', function(e) {
 // COORDONNÉES TEMPS RÉEL
 // ==============================
 
-const coordsDiv = document.getElementById("coords");
+const coordsDiv =
+  document.getElementById("coords");
 
 // souris
 map.on('mousemove', function(e) {
 
-  const x = Math.round(e.latlng.lng);
-  const y = Math.round(e.latlng.lat);
+  const x =
+    Math.round(e.latlng.lng);
+
+  const y =
+    Math.round(e.latlng.lat);
 
   coordsDiv.innerHTML =
     `X: ${x} | Y: ${y}`;
@@ -366,8 +472,11 @@ map.on('touchmove', function(e) {
 
   if (!e.latlng) return;
 
-  const x = Math.round(e.latlng.lng);
-  const y = Math.round(e.latlng.lat);
+  const x =
+    Math.round(e.latlng.lng);
+
+  const y =
+    Math.round(e.latlng.lat);
 
   coordsDiv.innerHTML =
     `X: ${x} | Y: ${y}`;
