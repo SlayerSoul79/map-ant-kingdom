@@ -26,6 +26,8 @@ h1 {
 #container {
   display: flex;
   height: calc(100vh - 60px);
+
+  position: relative;
 }
 
 /* ============================= */
@@ -38,10 +40,42 @@ h1 {
 }
 
 /* ============================= */
+/* COORDONNÉES */
+/* ============================= */
+
+#coords {
+
+  position: absolute;
+
+  bottom: 10px;
+  left: 10px;
+
+  z-index: 1000;
+
+  background: rgba(0,0,0,0.7);
+
+  padding: 6px 10px;
+
+  border-radius: 6px;
+
+  border: 1px solid orange;
+
+  color: white;
+
+  font-size: 14px;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 0 10px rgba(255,165,0,0.4);
+}
+
+/* ============================= */
 /* SIDEBAR */
 /* ============================= */
 
 #sidebar {
+
   width: 300px;
 
   background: #2a2a2a;
@@ -59,13 +93,43 @@ h1 {
 /* ============================= */
 
 #sidebar h2 {
+
   margin: 0;
+
   padding: 10px;
 
   text-align: center;
+
   font-size: 16px;
 
   border-bottom: 1px solid #444;
+}
+
+/* ============================= */
+/* SEARCH BAR */
+/* ============================= */
+
+#searchInput {
+
+  margin: 10px;
+
+  padding: 10px;
+
+  border: none;
+  outline: none;
+
+  border-radius: 6px;
+
+  background: #1e1e1e;
+
+  color: white;
+
+  font-size: 14px;
+}
+
+#searchInput::placeholder {
+
+  color: #888;
 }
 
 /* ============================= */
@@ -74,16 +138,15 @@ h1 {
 
 #locationList {
 
-  list-style: none;
-
-  padding: 0;
-  margin: 0;
-
   flex: 1;
 
   overflow-y: auto;
 
+  overflow-x: hidden;
+
   -webkit-overflow-scrolling: touch;
+
+  padding-bottom: 20px;
 }
 
 /* ============================= */
@@ -98,11 +161,48 @@ h1 {
 
   border-bottom: 1px solid #444;
 
-  transition: background 0.2s;
+  transition:
+    background 0.2s;
 }
 
 #locationList li:hover {
+
   background: #444;
+}
+
+/* ============================= */
+/* CATEGORIES */
+/* ============================= */
+
+.categoryTitle {
+
+  margin: 0;
+
+  padding: 12px;
+
+  background: #333;
+
+  cursor: pointer;
+
+  border-bottom: 1px solid #444;
+
+  user-select: none;
+
+  transition:
+    background 0.2s;
+}
+
+.categoryTitle:hover {
+
+  background: #444;
+}
+
+.category ul {
+
+  list-style: none;
+
+  padding: 0;
+  margin: 0;
 }
 
 /* ============================= */
@@ -131,6 +231,58 @@ h1 {
 }
 
 /* ============================= */
+/* CLUSTER */
+/* ============================= */
+
+.marker-cluster-small {
+
+  background:
+    rgba(255,165,0,0.4);
+}
+
+.marker-cluster-small div {
+
+  background:
+    rgba(255,165,0,0.8);
+
+  color: white;
+
+  font-weight: bold;
+}
+
+.marker-cluster-medium {
+
+  background:
+    rgba(255,140,0,0.4);
+}
+
+.marker-cluster-medium div {
+
+  background:
+    rgba(255,140,0,0.8);
+
+  color: white;
+
+  font-weight: bold;
+}
+
+.marker-cluster-large {
+
+  background:
+    rgba(255,90,0,0.4);
+}
+
+.marker-cluster-large div {
+
+  background:
+    rgba(255,90,0,0.8);
+
+  color: white;
+
+  font-weight: bold;
+}
+
+/* ============================= */
 /* MOBILE */
 /* ============================= */
 
@@ -148,6 +300,7 @@ h1 {
   #map {
 
     width: 100%;
+
     height: 70vh;
   }
 
@@ -155,12 +308,12 @@ h1 {
   #sidebar {
 
     width: 100%;
+
     height: 30vh;
 
     border-left: none;
-    border-top: 1px solid #444;
 
-    overflow-y: auto;
+    border-top: 1px solid #444;
   }
 
   /* liste */
@@ -201,87 +354,12 @@ h1 {
     font-size: 20px !important;
   }
 
-}
-/* ============================= */
-/* COORDONNÉES */
-/* ============================= */
+  /* coordonnées */
+  #coords {
 
-#coords {
+    font-size: 16px;
 
-  position: absolute;
+    bottom: 80px;
+  }
 
-  bottom: 10px;
-  left: 10px;
-
-  z-index: 1000;
-
-  background: rgba(0, 0, 0, 0.7);
-
-  padding: 6px 10px;
-
-  border-radius: 6px;
-
-  font-size: 14px;
-
-  color: white;
-
-  pointer-events: none;
-}
-
-/* ============================= */
-/* SEARCH BAR */
-/* ============================= */
-
-#searchInput {
-
-  margin: 10px;
-
-  padding: 10px;
-
-  border: none;
-  outline: none;
-
-  border-radius: 6px;
-
-  background: #1e1e1e;
-
-  color: white;
-
-  font-size: 14px;
-}
-
-#searchInput::placeholder {
-
-  color: #888;
-}
-/* ============================= */
-/* CATEGORIES */
-/* ============================= */
-
-.categoryTitle {
-
-  margin: 0;
-
-  padding: 12px;
-
-  background: #333;
-
-  cursor: pointer;
-
-  border-bottom: 1px solid #444;
-
-  user-select: none;
-}
-
-.categoryTitle:hover {
-
-  background: #444;
-}
-
-.category ul {
-
-  list-style: none;
-
-  padding: 0;
-  margin: 0;
 }

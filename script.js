@@ -37,6 +37,25 @@ const initialCenter = map.getCenter();
 const initialZoom = map.getZoom();
 
 // ==============================
+// CLUSTER
+// ==============================
+
+const markerCluster =
+  L.markerClusterGroup({
+
+    showCoverageOnHover: false,
+
+    spiderfyOnMaxZoom: true,
+
+    zoomToBoundsOnClick: true,
+
+    maxClusterRadius: 60
+
+  });
+
+map.addLayer(markerCluster);
+
+// ==============================
 // ICON MARKER
 // ==============================
 
@@ -78,24 +97,14 @@ const searchInput =
 // ZONE JOUABLE
 // ==============================
 
-// coordonnées du contour jouable
-// format = [Y, X]
-
 const playableZone = [
 
-  [25, 1280],     // haut
-
-  [960, 2420],    // droite
-
-  [1885, 1285],   // bas
-
-  [960, 140],     // gauche
+  [25, 1280],
+  [960, 2420],
+  [1885, 1285],
+  [960, 140],
 
 ];
-
-// ==============================
-// AFFICHAGE ZONE
-// ==============================
 
 // ==============================
 // TEST SI POINT DANS ZONE
@@ -146,7 +155,6 @@ function getCategory(x, y) {
   const dx = x - centerX;
   const dy = y - centerY;
 
-  // gauche / droite
   if (Math.abs(dx) > Math.abs(dy)) {
 
     return dx > 0
@@ -154,7 +162,6 @@ function getCategory(x, y) {
       : "left";
   }
 
-  // haut / bas
   return dy > 0
     ? "bottom"
     : "top";
@@ -237,7 +244,9 @@ locations.forEach(loc => {
   // création marker
   const marker = L.marker(leafletCoords, {
     icon: customIcon
-  }).addTo(map);
+  });
+
+  markerCluster.addLayer(marker);
 
   // popup
   marker.bindPopup(`
@@ -271,7 +280,6 @@ locations.forEach(loc => {
 
   li.textContent = loc.name;
 
-  // dataset recherche
   li.dataset.name =
     loc.name.toLowerCase();
 
@@ -282,7 +290,7 @@ locations.forEach(loc => {
   const category =
     getCategory(x, y);
 
-  // ajout bonne catégorie
+  // ajout liste catégorie
   if (category === "top") {
 
     topList.appendChild(li);
@@ -307,10 +315,11 @@ locations.forEach(loc => {
 
   }
 
-  // sauvegarde marker catégorie
-  categoryMarkers[category].push(marker);
+  // sauvegarde catégorie
+  categoryMarkers[category]
+    .push(marker);
 
-  // sauvegarde marker
+  // sauvegarde globale
   allMarkers.push({
 
     marker,
@@ -346,11 +355,15 @@ searchInput.addEventListener("input", () => {
     // afficher / cacher marker
     if (match) {
 
-      item.marker.addTo(map);
+      markerCluster
+        .addLayer(item.marker);
 
-    } else {
+    }
 
-      map.removeLayer(item.marker);
+    else {
+
+      markerCluster
+        .removeLayer(item.marker);
 
     }
 
@@ -367,7 +380,6 @@ const categoryTitles =
 
 categoryTitles.forEach(title => {
 
-  // flèche ouverte par défaut
   title.innerHTML =
     `▼ ${title.innerText}`;
 
@@ -398,7 +410,8 @@ categoryTitles.forEach(title => {
       categoryMarkers[category]
         .forEach(marker => {
 
-          map.removeLayer(marker);
+          markerCluster
+            .removeLayer(marker);
 
         });
 
@@ -418,7 +431,8 @@ categoryTitles.forEach(title => {
       categoryMarkers[category]
         .forEach(marker => {
 
-          marker.addTo(map);
+          markerCluster
+            .addLayer(marker);
 
         });
 
@@ -443,7 +457,8 @@ resetControl.onAdd = function () {
     'leaflet-bar leaflet-control'
   );
 
-  const button = L.DomUtil.create('a', '', div);
+  const button =
+    L.DomUtil.create('a', '', div);
 
   // icône cible
   button.innerHTML = `
@@ -470,18 +485,27 @@ resetControl.onAdd = function () {
   button.style.margin = "0";
 
   // empêche propagation
-  L.DomEvent.disableClickPropagation(div);
+  L.DomEvent
+    .disableClickPropagation(div);
 
   // clic bouton
-  L.DomEvent.on(button, 'click', function (e) {
+  L.DomEvent.on(
+    button,
+    'click',
+    function (e) {
 
-    L.DomEvent.preventDefault(e);
+      L.DomEvent.preventDefault(e);
 
-    map.flyTo(initialCenter, initialZoom, {
-      duration: 1.5
-    });
+      map.flyTo(
+        initialCenter,
+        initialZoom,
+        {
+          duration: 1.5
+        }
+      );
 
-  });
+    }
+  );
 
   return div;
 };
@@ -498,42 +522,5 @@ map.on('click', function(e) {
     "X :", Math.round(e.latlng.lng),
     "Y :", Math.round(e.latlng.lat)
   );
-
-});
-
-// ==============================
-// COORDONNÉES TEMPS RÉEL
-// ==============================
-
-const coordsDiv =
-  document.getElementById("coords");
-
-// souris
-map.on('mousemove', function(e) {
-
-  const x =
-    Math.round(e.latlng.lng);
-
-  const y =
-    Math.round(e.latlng.lat);
-
-  coordsDiv.innerHTML =
-    `X: ${x} | Y: ${y}`;
-
-});
-
-// tactile mobile
-map.on('touchmove', function(e) {
-
-  if (!e.latlng) return;
-
-  const x =
-    Math.round(e.latlng.lng);
-
-  const y =
-    Math.round(e.latlng.lat);
-
-  coordsDiv.innerHTML =
-    `X: ${x} | Y: ${y}`;
 
 });

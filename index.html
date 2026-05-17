@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Carte The Ant Underground Kingdom</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <link rel="stylesheet" href="style.css">
+<head>
+
   <meta charset="UTF-8">
 
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
   <title>Carte The Ant Underground Kingdom</title>
+
+  <!-- LEAFLET -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <!-- MARKER CLUSTER -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+
+  <!-- TON CSS -->
+  <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -20,60 +32,86 @@
 
 <div id="container">
 
+  <!-- MAP -->
   <div id="map"></div>
 
-<div id="coords">
-  X: 0 | Y: 0
-</div>
+  <!-- COORDS -->
+  <div id="coords">
+    X: 0 | Y: 0
+  </div>
 
+  <!-- SIDEBAR -->
   <div id="sidebar">
+
     <h2>Inactive ant colonies</h2>
 
+    <!-- SEARCH -->
     <input
-  type="text"
-  id="searchInput"
-  placeholder="Search colony..."
->
+      type="text"
+      id="searchInput"
+      placeholder="Search colony..."
+    >
 
+    <!-- LIST -->
     <div id="locationList">
 
-  <div class="category">
+      <!-- HAUT -->
+      <div class="category">
 
-    <h3 class="categoryTitle">Haut</h3>
+        <h3 class="categoryTitle">
+          Haut
+        </h3>
 
-    <ul id="topList"></ul>
+        <ul id="topList"></ul>
 
-  </div>
+      </div>
 
-  <div class="category">
+      <!-- BAS -->
+      <div class="category">
 
-    <h3 class="categoryTitle">Bas</h3>
+        <h3 class="categoryTitle">
+          Bas
+        </h3>
 
-    <ul id="bottomList"></ul>
+        <ul id="bottomList"></ul>
 
-  </div>
+      </div>
 
-  <div class="category">
+      <!-- GAUCHE -->
+      <div class="category">
 
-    <h3 class="categoryTitle">Gauche</h3>
+        <h3 class="categoryTitle">
+          Gauche
+        </h3>
 
-    <ul id="leftList"></ul>
+        <ul id="leftList"></ul>
 
-  </div>
+      </div>
 
-  <div class="category">
+      <!-- DROITE -->
+      <div class="category">
 
-    <h3 class="categoryTitle">Droite</h3>
+        <h3 class="categoryTitle">
+          Droite
+        </h3>
 
-    <ul id="rightList"></ul>
+        <ul id="rightList"></ul>
+
+      </div>
+
+    </div>
 
   </div>
 
 </div>
 
-</div>
-
+<!-- LEAFLET -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- MARKER CLUSTER -->
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<!-- TON JS -->
 <script src="script.js"></script>
 
 </body>
