@@ -524,3 +524,32 @@ map.on('click', function(e) {
   );
 
 });
+// ==============================
+// SIDEBAR MOBILE SLIDE
+// ==============================
+
+const sidebar =
+  document.getElementById("sidebar");
+
+const sidebarHandle =
+  document.getElementById("sidebarHandle");
+
+sidebarHandle.addEventListener("click", () => {
+
+  // ouvrir
+  if (sidebar.classList.contains("collapsed")) {
+
+    sidebar.classList.remove("collapsed");
+
+    sidebar.classList.add("open");
+  }
+
+  // fermer
+  else {
+
+    sidebar.classList.remove("open");
+
+    sidebar.classList.add("collapsed");
+  }
+
+});
