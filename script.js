@@ -33,37 +33,55 @@ L.imageOverlay('map.png', bounds).addTo(map);
 // vue initiale
 map.fitBounds(bounds);
 
-// ==============================
-// FIX MOBILE
-// ==============================
-
-if (window.innerWidth <= 768) {
-
-  // petit recul seulement
-  map.setZoom(map.getZoom() - 0.3);
-
-}
-
-// force Leaflet à recalculer
+// refresh taille
 setTimeout(() => {
 
   map.invalidateSize();
 
 }, 200);
 
-// resize mobile
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
 
   map.invalidateSize();
 
 });
 
 // ==============================
-// SAUVEGARDE VUE INITIALE
+// SIDEBAR MOBILE
 // ==============================
 
-const initialCenter = map.getCenter();
-const initialZoom = map.getZoom();
+const sidebar =
+  document.getElementById("sidebar");
+
+const sidebarHandle =
+  document.getElementById("sidebarHandle");
+
+// mobile uniquement
+if (window.innerWidth <= 768) {
+
+  sidebar.classList.add("collapsed");
+
+}
+
+sidebarHandle.addEventListener("click", () => {
+
+  if (sidebar.classList.contains("collapsed")) {
+
+    sidebar.classList.remove("collapsed");
+
+    sidebar.classList.add("open");
+
+  }
+
+  else {
+
+    sidebar.classList.remove("open");
+
+    sidebar.classList.add("collapsed");
+
+  }
+
+});
 
 // ==============================
 // CLUSTER
@@ -85,7 +103,7 @@ const markerCluster =
 map.addLayer(markerCluster);
 
 // ==============================
-// ICON MARKER
+// ICON
 // ==============================
 
 const customIcon = L.icon({
@@ -93,6 +111,7 @@ const customIcon = L.icon({
   iconUrl: 'marker.png',
 
   iconSize: [30, 40],
+
   iconAnchor: [20, 40],
 
   popupAnchor: [0, -40]
@@ -100,7 +119,7 @@ const customIcon = L.icon({
 });
 
 // ==============================
-// LISTES CATÉGORIES
+// LISTES
 // ==============================
 
 const topList =
@@ -115,99 +134,8 @@ const leftList =
 const rightList =
   document.getElementById("rightList");
 
-// ==============================
-// SEARCH
-// ==============================
-
 const searchInput =
   document.getElementById("searchInput");
-
-// ==============================
-// ZONE JOUABLE
-// ==============================
-
-const playableZone = [
-
-  [25, 1280],
-  [960, 2420],
-  [1885, 1285],
-  [960, 140],
-
-];
-
-// ==============================
-// TEST SI POINT DANS ZONE
-// ==============================
-
-function isInsideZone(x, y) {
-
-  let inside = false;
-
-  for (
-    let i = 0, j = playableZone.length - 1;
-    i < playableZone.length;
-    j = i++
-  ) {
-
-    const xi = playableZone[i][1];
-    const yi = playableZone[i][0];
-
-    const xj = playableZone[j][1];
-    const yj = playableZone[j][0];
-
-    const intersect =
-      ((yi > y) !== (yj > y))
-      &&
-      (
-        x <
-        ((xj - xi) * (y - yi))
-        / (yj - yi)
-        + xi
-      );
-
-    if (intersect)
-      inside = !inside;
-  }
-
-  return inside;
-}
-
-// ==============================
-// CATÉGORIES
-// ==============================
-
-const centerX = 1280;
-const centerY = 960;
-
-function getCategory(x, y) {
-
-  const dx = x - centerX;
-  const dy = y - centerY;
-
-  if (Math.abs(dx) > Math.abs(dy)) {
-
-    return dx > 0
-      ? "right"
-      : "left";
-  }
-
-  return dy > 0
-    ? "bottom"
-    : "top";
-}
-
-// ==============================
-// TABLEAU MARKERS PAR CATÉGORIE
-// ==============================
-
-const categoryMarkers = {
-
-  top: [],
-  bottom: [],
-  left: [],
-  right: []
-
-};
 
 // ==============================
 // LOCATIONS
@@ -242,84 +170,89 @@ const locations = [
 ];
 
 // ==============================
-// TRI ALPHABETIQUE
+// CATEGORY
 // ==============================
 
-locations.sort((a, b) =>
-  a.name.localeCompare(b.name)
-);
+function getCategory(x, y) {
 
-// ==============================
-// TABLEAU DES MARKERS
-// ==============================
+  const centerX = 1280;
+  const centerY = 960;
 
-const allMarkers = [];
+  const dx = x - centerX;
+  const dy = y - centerY;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+
+    return dx > 0
+      ? "right"
+      : "left";
+  }
+
+  return dy > 0
+    ? "bottom"
+    : "top";
+}
 
 // ==============================
 // MARKERS
 // ==============================
 
+const allMarkers = [];
+
 locations.forEach(loc => {
 
-  const x = loc.x;
-  const y = loc.y;
+  const leafletCoords = [
+    loc.y,
+    loc.x
+  ];
 
-  // filtre zone
-  if (!isInsideZone(x, y)) return;
-
-  // coordonnées leaflet
-  const leafletCoords = [y, x];
-
-  // création marker
-  const marker = L.marker(leafletCoords, {
-    icon: customIcon
-  });
+  const marker = L.marker(
+    leafletCoords,
+    {
+      icon: customIcon
+    }
+  );
 
   markerCluster.addLayer(marker);
 
-  // popup
   marker.bindPopup(`
     <div class="popup">
       <h3>${loc.name}</h3>
-      <p>X : ${x}</p>
-      <p>Y : ${y}</p>
+      <p>X : ${loc.x}</p>
+      <p>Y : ${loc.y}</p>
     </div>
   `);
 
-  // focus marker
   function focusMarker() {
 
-    map.flyTo(leafletCoords, 1, {
-      duration: 1.5
-    });
+    map.flyTo(
+      leafletCoords,
+      1,
+      {
+        duration: 1.5
+      }
+    );
 
     setTimeout(() => {
 
       marker.openPopup();
 
-    }, 800);
+    }, 700);
 
   }
 
-  // clic marker
-  marker.on('click', focusMarker);
+  marker.on("click", focusMarker);
 
-  // élément liste
-  const li = document.createElement("li");
+  const li =
+    document.createElement("li");
 
   li.textContent = loc.name;
 
-  li.dataset.name =
-    loc.name.toLowerCase();
-
-  // clic liste
   li.onclick = focusMarker;
 
-  // catégorie
   const category =
-    getCategory(x, y);
+    getCategory(loc.x, loc.y);
 
-  // ajout liste catégorie
   if (category === "top") {
 
     topList.appendChild(li);
@@ -338,26 +271,19 @@ locations.forEach(loc => {
 
   }
 
-  else if (category === "right") {
+  else {
 
     rightList.appendChild(li);
 
   }
 
-  // sauvegarde catégorie
-  categoryMarkers[category]
-    .push(marker);
-
-  // sauvegarde globale
   allMarkers.push({
 
     marker,
     li,
 
     name:
-      loc.name.toLowerCase(),
-
-    category
+      loc.name.toLowerCase()
 
   });
 
@@ -377,22 +303,22 @@ searchInput.addEventListener("input", () => {
     const match =
       item.name.includes(value);
 
-    // afficher / cacher liste
     item.li.style.display =
       match ? "block" : "none";
 
-    // afficher / cacher marker
     if (match) {
 
-      markerCluster
-        .addLayer(item.marker);
+      markerCluster.addLayer(
+        item.marker
+      );
 
     }
 
     else {
 
-      markerCluster
-        .removeLayer(item.marker);
+      markerCluster.removeLayer(
+        item.marker
+      );
 
     }
 
@@ -401,7 +327,7 @@ searchInput.addEventListener("input", () => {
 });
 
 // ==============================
-// CATÉGORIES REPLIABLES
+// CATÉGORIES
 // ==============================
 
 const categoryTitles =
@@ -419,13 +345,9 @@ categoryTitles.forEach(title => {
     const ul =
       title.nextElementSibling;
 
-    const category =
-      ul.id.replace("List", "");
-
     const isOpen =
       title.dataset.open === "true";
 
-    // fermer
     if (isOpen) {
 
       ul.style.display = "none";
@@ -435,18 +357,8 @@ categoryTitles.forEach(title => {
 
       title.dataset.open = "false";
 
-      // cacher markers
-      categoryMarkers[category]
-        .forEach(marker => {
-
-          markerCluster
-            .removeLayer(marker);
-
-        });
-
     }
 
-    // ouvrir
     else {
 
       ul.style.display = "block";
@@ -456,140 +368,8 @@ categoryTitles.forEach(title => {
 
       title.dataset.open = "true";
 
-      // afficher markers
-      categoryMarkers[category]
-        .forEach(marker => {
-
-          markerCluster
-            .addLayer(marker);
-
-        });
-
     }
 
   });
-
-});
-
-// ==============================
-// BOUTON RESET VIEW
-// ==============================
-
-const resetControl = L.control({
-  position: 'topleft'
-});
-
-resetControl.onAdd = function () {
-
-  const div = L.DomUtil.create(
-    'div',
-    'leaflet-bar leaflet-control'
-  );
-
-  const button =
-    L.DomUtil.create('a', '', div);
-
-  // icône cible
-  button.innerHTML = `
-  <svg width="18" height="18" viewBox="0 0 24 24">
-    <path fill="#333"
-      d="M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zm9 3h-2.07A7.002 7.002 0 0 0 13 5.07V3h-2v2.07A7.002 7.002 0 0 0 5.07 11H3v2h2.07A7.002 7.002 0 0 0 11 18.93V21h2v-2.07A7.002 7.002 0 0 0 18.93 13H21v-2zM12 17a5 5 0 1 1 0-10a5 5 0 0 1 0 10z"/>
-  </svg>
-  `;
-
-  button.href = "#";
-
-  button.title = "Vue initiale";
-
-  // taille
-  button.style.width = "30px";
-  button.style.height = "30px";
-
-  // centrage
-  button.style.display = "flex";
-  button.style.alignItems = "center";
-  button.style.justifyContent = "center";
-
-  button.style.padding = "0";
-  button.style.margin = "0";
-
-  // empêche propagation
-  L.DomEvent
-    .disableClickPropagation(div);
-
-  // clic bouton
-  L.DomEvent.on(
-    button,
-    'click',
-    function (e) {
-
-      L.DomEvent.preventDefault(e);
-
-      map.flyTo(
-        initialCenter,
-        initialZoom,
-        {
-          duration: 1.5
-        }
-      );
-
-    }
-  );
-
-  return div;
-};
-
-resetControl.addTo(map);
-
-// ==============================
-// DEBUG COORDONNÉES
-// ==============================
-
-map.on('click', function(e) {
-
-  console.log(
-    "X :", Math.round(e.latlng.lng),
-    "Y :", Math.round(e.latlng.lat)
-  );
-
-});
-
-// ==============================
-// REFRESH TAILLE MAP
-// ==============================
-
-window.addEventListener("resize", () => {
-
-  map.invalidateSize();
-
-});
-
-// ==============================
-// SIDEBAR MOBILE SLIDE
-// ==============================
-
-const sidebar =
-  document.getElementById("sidebar");
-
-const sidebarHandle =
-  document.getElementById("sidebarHandle");
-
-sidebarHandle.addEventListener("click", () => {
-
-  // ouvrir
-  if (sidebar.classList.contains("collapsed")) {
-
-    sidebar.classList.remove("collapsed");
-
-    sidebar.classList.add("open");
-  }
-
-  // fermer
-  else {
-
-    sidebar.classList.remove("open");
-
-    sidebar.classList.add("collapsed");
-  }
 
 });

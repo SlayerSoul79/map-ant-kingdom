@@ -4,16 +4,30 @@
 <head>
 
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Carte The Ant Underground Kingdom</title>
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <!-- LEAFLET -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"
+  >
 
-  <!-- Marker Cluster -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+  <!-- MARKER CLUSTER -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+  >
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css">
@@ -29,11 +43,8 @@
     <!-- MAP -->
     <div id="map"></div>
 
-   <div id="sidebar" class="collapsed">
-
-  <div id="sidebarHandle">
-    <div id="sidebarBar"></div>
-  </div>>
+    <!-- SIDEBAR -->
+    <div id="sidebar">
 
       <!-- HANDLE MOBILE -->
       <div id="sidebarHandle">
@@ -52,28 +63,44 @@
       <!-- LIST -->
       <div id="locationList">
 
-        <!-- TOP -->
         <div class="category">
-          <h3 class="categoryTitle">Haut</h3>
+
+          <h3 class="categoryTitle">
+            Haut
+          </h3>
+
           <ul id="topList"></ul>
+
         </div>
 
-        <!-- BOTTOM -->
         <div class="category">
-          <h3 class="categoryTitle">Bas</h3>
+
+          <h3 class="categoryTitle">
+            Bas
+          </h3>
+
           <ul id="bottomList"></ul>
+
         </div>
 
-        <!-- LEFT -->
         <div class="category">
-          <h3 class="categoryTitle">Gauche</h3>
+
+          <h3 class="categoryTitle">
+            Gauche
+          </h3>
+
           <ul id="leftList"></ul>
+
         </div>
 
-        <!-- RIGHT -->
         <div class="category">
-          <h3 class="categoryTitle">Droite</h3>
+
+          <h3 class="categoryTitle">
+            Droite
+          </h3>
+
           <ul id="rightList"></ul>
+
         </div>
 
       </div>
@@ -82,10 +109,10 @@
 
   </div>
 
-  <!-- Leaflet -->
+  <!-- LEAFLET -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <!-- Marker Cluster -->
+  <!-- MARKER CLUSTER -->
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
   <!-- JS -->
