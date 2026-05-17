@@ -202,3 +202,28 @@ h1 {
   }
 
 }
+/* ============================= */
+/* COORDONNÉES */
+/* ============================= */
+
+#coords {
+
+  position: absolute;
+
+  bottom: 10px;
+  left: 10px;
+
+  z-index: 1000;
+
+  background: rgba(0, 0, 0, 0.7);
+
+  padding: 6px 10px;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+
+  color: white;
+
+  pointer-events: none;
+}

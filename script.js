@@ -285,3 +285,33 @@ map.on('click', function(e) {
   );
 
 });
+
+// ==============================
+// COORDONNÉES TEMPS RÉEL
+// ==============================
+
+const coordsDiv = document.getElementById("coords");
+
+// souris
+map.on('mousemove', function(e) {
+
+  const x = Math.round(e.latlng.lng);
+  const y = Math.round(e.latlng.lat);
+
+  coordsDiv.innerHTML =
+    `X: ${x} | Y: ${y}`;
+
+});
+
+// tactile mobile
+map.on('touchmove', function(e) {
+
+  if (!e.latlng) return;
+
+  const x = Math.round(e.latlng.lng);
+  const y = Math.round(e.latlng.lat);
+
+  coordsDiv.innerHTML =
+    `X: ${x} | Y: ${y}`;
+
+});
