@@ -56,24 +56,6 @@ if (window.innerWidth <= 768) {
 
 }
 
-// bloque le bounce mobile
-document.body.addEventListener(
-  'touchmove',
-  function(e) {
-
-    if (
-      sidebar.contains(e.target) ||
-      document.getElementById("locationList").contains(e.target)
-    ) {
-      return;
-    }
-
-    e.preventDefault();
-
-  },
-  { passive: false }
-);
-
 // ==============================
 // SAUVEGARDE VUE INITIALE
 // ==============================
