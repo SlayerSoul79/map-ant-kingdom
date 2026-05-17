@@ -63,33 +63,19 @@ list.innerHTML = "";
 // ZONE JOUABLE
 // ==============================
 
+// coordonnées du contour jouable
 // format = [Y, X]
 
 const playableZone = [
 
-  [80, 1280],
-  [470, 2450],
-  [950, 2200],
-  [1820, 1280],
-  [1400, 420],
-  [960, 40]
+  [25, 1280],     // bas
 
-];
+  [960, 2420],    // droite
 
-// ==============================
-// AFFICHAGE ZONE
-// ==============================
+  [1885, 1285],   // haut
 
-L.polygon(playableZone, {
-
-  color: "orange",
-  weight: 2,
-
-  fillColor: "orange",
-  fillOpacity: 0.15
-
-}).addTo(map);
-
+  [960, 140],    // gauche
+]
 // ==============================
 // TEST SI POINT DANS ZONE
 // ==============================
