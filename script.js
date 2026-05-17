@@ -60,6 +60,13 @@ const list = document.getElementById("locationList");
 list.innerHTML = "";
 
 // ==============================
+// SEARCH
+// ==============================
+
+const searchInput =
+  document.getElementById("searchInput");
+
+// ==============================
 // ZONE JOUABLE
 // ==============================
 
@@ -74,8 +81,9 @@ const playableZone = [
 
   [1885, 1285],   // haut
 
-  [960, 140],    // gauche
+  [960, 140],     // gauche
 ]
+
 // ==============================
 // TEST SI POINT DANS ZONE
 // ==============================
@@ -154,6 +162,12 @@ locations.sort((a, b) =>
 );
 
 // ==============================
+// TABLEAU DES MARKERS
+// ==============================
+
+const allMarkers = [];
+
+// ==============================
 // MARKERS
 // ==============================
 
@@ -205,11 +219,55 @@ locations.forEach(loc => {
 
   li.textContent = loc.name;
 
+  // dataset recherche
+  li.dataset.name =
+    loc.name.toLowerCase();
+
   // clic liste
   li.onclick = focusMarker;
 
   // ajout liste
   list.appendChild(li);
+
+  // sauvegarde marker
+  allMarkers.push({
+    marker,
+    li,
+    name: loc.name.toLowerCase()
+  });
+
+});
+
+// ==============================
+// SEARCH
+// ==============================
+
+searchInput.addEventListener("input", () => {
+
+  const value =
+    searchInput.value.toLowerCase();
+
+  allMarkers.forEach(item => {
+
+    const match =
+      item.name.includes(value);
+
+    // afficher / cacher liste
+    item.li.style.display =
+      match ? "block" : "none";
+
+    // afficher / cacher marker
+    if (match) {
+
+      item.marker.addTo(map);
+
+    } else {
+
+      map.removeLayer(item.marker);
+
+    }
+
+  });
 
 });
 

@@ -227,3 +227,30 @@ h1 {
 
   pointer-events: none;
 }
+
+/* ============================= */
+/* SEARCH BAR */
+/* ============================= */
+
+#searchInput {
+
+  margin: 10px;
+
+  padding: 10px;
+
+  border: none;
+  outline: none;
+
+  border-radius: 6px;
+
+  background: #1e1e1e;
+
+  color: white;
+
+  font-size: 14px;
+}
+
+#searchInput::placeholder {
+
+  color: #888;
+}
