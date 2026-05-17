@@ -94,20 +94,6 @@ const playableZone = [
 ];
 
 // ==============================
-// AFFICHAGE ZONE
-// ==============================
-
-L.polygon(playableZone, {
-
-  color: "orange",
-  weight: 2,
-
-  fillColor: "orange",
-  fillOpacity: 0.15
-
-}).addTo(map);
-
-// ==============================
 // TEST SI POINT DANS ZONE
 // ==============================
 
