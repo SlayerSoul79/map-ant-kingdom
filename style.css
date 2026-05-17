@@ -39,36 +39,6 @@ h1 {
   height: 100%;
 }
 
-/* ============================= */
-/* COORDONNÉES */
-/* ============================= */
-
-#coords {
-
-  position: absolute;
-
-  bottom: 10px;
-  left: 10px;
-
-  z-index: 1000;
-
-  background: rgba(0,0,0,0.7);
-
-  padding: 6px 10px;
-
-  border-radius: 6px;
-
-  border: 1px solid orange;
-
-  color: white;
-
-  font-size: 14px;
-
-  pointer-events: none;
-
-  box-shadow:
-    0 0 10px rgba(255,165,0,0.4);
-}
 
 /* ============================= */
 /* SIDEBAR */
