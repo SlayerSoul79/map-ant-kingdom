@@ -539,7 +539,6 @@ map.on('click', function(e) {
     "X :", Math.round(e.latlng.lng),
     "Y :", Math.round(e.latlng.lat)
   );
-
 });
 
 });
@@ -549,3 +548,26 @@ window.addEventListener("resize", () => {
   map.invalidateSize();
 
 });
+
+// FIX taille réelle mobile
+function resizeMapMobile() {
+
+  const vh = window.innerHeight;
+
+  document.getElementById("map").style.height =
+    vh * 0.65 + "px";
+
+  map.invalidateSize();
+}
+
+window.addEventListener(
+  "resize",
+  resizeMapMobile
+);
+
+window.addEventListener(
+  "orientationchange",
+  resizeMapMobile
+);
+
+resizeMapMobile();

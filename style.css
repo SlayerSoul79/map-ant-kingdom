@@ -296,24 +296,26 @@ h1 {
 
   #container {
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
 
-    height: auto;
-    min-height: 100dvh;
-  }
+  position: relative;
 
+  width: 100%;
+  height: calc(100dvh - 60px);
+
+  overflow: hidden;
+}
   /* MAP */
 
-  #map {
+#map {
 
-    width: 100%;
-    height: 65dvh !important;
+  flex: 1;
 
-    flex-shrink: 0;
+  width: 100%;
+  height: 100%;
 
-    touch-action: pan-x pan-y;
-  }
+  min-height: 0;
+}
 
   /* SIDEBAR */
 
@@ -376,4 +378,14 @@ h1 {
     font-size: 22px !important;
   }
 
+}
+/* stop bounce mobile */
+
+html,
+body,
+#container,
+#map {
+
+  overscroll-behavior: none;
+  touch-action: manipulation;
 }
