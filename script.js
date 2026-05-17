@@ -3,9 +3,15 @@
 // ==============================
 
 const map = L.map('map', {
+
   crs: L.CRS.Simple,
-  minZoom: -1.55,
-  maxZoom: 2
+
+  minZoom: -2,
+  maxZoom: 2,
+
+  tap: true,
+  touchZoom: true,
+  bounceAtZoomLimits: false
 });
 
 // taille réelle image
