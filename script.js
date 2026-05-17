@@ -36,23 +36,13 @@ map.setMaxBounds(bounds);
 if (window.innerWidth <= 768) {
 
   // zoom plus éloigné
-  map.setZoom(map.getZoom() - 1);
+  map.setZoom(map.getZoom() - 0.8);
 
-  // empêche le bounce
-  map.dragging.disable();
+  // empêche l'effet bounce
+  map.options.bounceAtZoomLimits = false;
 
-  // active le drag seulement avec 2 doigts
-  map.touchZoom.disable();
-
-}
-
-// ==============================
-// ZOOM MOBILE
-// ==============================
-
-if (window.innerWidth <= 768) {
-
-  map.setZoom(map.getZoom() - 0.5);
+  // inertie mobile plus douce
+  map.options.inertia = false;
 
 }
 
@@ -551,33 +541,6 @@ map.on('click', function(e) {
   );
 
 });
-// ==============================
-// SIDEBAR MOBILE SLIDE
-// ==============================
-
-const sidebar =
-  document.getElementById("sidebar");
-
-const sidebarHandle =
-  document.getElementById("sidebarHandle");
-
-sidebarHandle.addEventListener("click", () => {
-
-  // ouvrir
-  if (sidebar.classList.contains("collapsed")) {
-
-    sidebar.classList.remove("collapsed");
-
-    sidebar.classList.add("open");
-  }
-
-  // fermer
-  else {
-
-    sidebar.classList.remove("open");
-
-    sidebar.classList.add("collapsed");
-  }
 
 });
 // refresh taille mobile
