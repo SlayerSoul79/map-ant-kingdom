@@ -6,7 +6,7 @@ const map = L.map('map', {
 
   crs: L.CRS.Simple,
 
-  minZoom: -1.53,
+  minZoom: -1.55,
   maxZoom: 2,
 
   tap: true,
