@@ -94,6 +94,20 @@ const playableZone = [
 ];
 
 // ==============================
+// AFFICHAGE ZONE
+// ==============================
+
+L.polygon(playableZone, {
+
+  color: "orange",
+  weight: 2,
+
+  fillColor: "orange",
+  fillOpacity: 0.15
+
+}).addTo(map);
+
+// ==============================
 // TEST SI POINT DANS ZONE
 // ==============================
 
@@ -155,6 +169,19 @@ function getCategory(x, y) {
     ? "bottom"
     : "top";
 }
+
+// ==============================
+// TABLEAU MARKERS PAR CATÉGORIE
+// ==============================
+
+const categoryMarkers = {
+
+  top: [],
+  bottom: [],
+  left: [],
+  right: []
+
+};
 
 // ==============================
 // LOCATIONS
@@ -290,6 +317,9 @@ locations.forEach(loc => {
 
   }
 
+  // sauvegarde marker catégorie
+  categoryMarkers[category].push(marker);
+
   // sauvegarde marker
   allMarkers.push({
 
@@ -297,7 +327,9 @@ locations.forEach(loc => {
     li,
 
     name:
-      loc.name.toLowerCase()
+      loc.name.toLowerCase(),
+
+    category
 
   });
 
@@ -345,15 +377,62 @@ const categoryTitles =
 
 categoryTitles.forEach(title => {
 
+  // flèche ouverte par défaut
+  title.innerHTML =
+    `▼ ${title.innerText}`;
+
+  title.dataset.open = "true";
+
   title.addEventListener("click", () => {
 
     const ul =
       title.nextElementSibling;
 
-    ul.style.display =
-      ul.style.display === "none"
-      ? "block"
-      : "none";
+    const category =
+      ul.id.replace("List", "");
+
+    const isOpen =
+      title.dataset.open === "true";
+
+    // fermer
+    if (isOpen) {
+
+      ul.style.display = "none";
+
+      title.innerHTML =
+        `▶ ${title.innerText.replace("▼ ", "")}`;
+
+      title.dataset.open = "false";
+
+      // cacher markers
+      categoryMarkers[category]
+        .forEach(marker => {
+
+          map.removeLayer(marker);
+
+        });
+
+    }
+
+    // ouvrir
+    else {
+
+      ul.style.display = "block";
+
+      title.innerHTML =
+        `▼ ${title.innerText.replace("▶ ", "")}`;
+
+      title.dataset.open = "true";
+
+      // afficher markers
+      categoryMarkers[category]
+        .forEach(marker => {
+
+          marker.addTo(map);
+
+        });
+
+    }
 
   });
 
