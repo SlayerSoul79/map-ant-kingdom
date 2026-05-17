@@ -30,6 +30,23 @@ map.fitBounds(bounds);
 map.setMaxBounds(bounds);
 
 // ==============================
+// MOBILE FIX
+// ==============================
+
+if (window.innerWidth <= 768) {
+
+  // zoom plus éloigné
+  map.setZoom(map.getZoom() - 1);
+
+  // empêche le bounce
+  map.dragging.disable();
+
+  // active le drag seulement avec 2 doigts
+  map.touchZoom.disable();
+
+}
+
+// ==============================
 // ZOOM MOBILE
 // ==============================
 
@@ -579,5 +596,11 @@ sidebarHandle.addEventListener("click", () => {
 
     sidebar.classList.add("collapsed");
   }
+
+});
+// refresh taille mobile
+window.addEventListener("resize", () => {
+
+  map.invalidateSize();
 
 });
