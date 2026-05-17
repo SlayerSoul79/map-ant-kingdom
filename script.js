@@ -1,135 +1,266 @@
-
-// ==============================
-// SCALE (carte uniquement)
-// ==============================
-const SCALE = 1.5;
-
 // ==============================
 // MAP
 // ==============================
+
 const map = L.map('map', {
   crs: L.CRS.Simple,
-  minZoom: -3,
-  maxZoom: 1
+  minZoom: -1.55,
+  maxZoom: 2
 });
 
-// base size
-const baseWidth = 2560;
-const baseHeight = 1920;
+// taille réelle image
+const width = 2560;
+const height = 1920;
 
-// scaled size (carte seulement)
-const imageWidth = baseWidth * SCALE;
-const imageHeight = baseHeight * SCALE;
+// limites
+const bounds = [[0, 0], [height, width]];
 
-const bounds = [[0, 0], [imageHeight, imageWidth]];
-
+// image carte
 L.imageOverlay('map.png', bounds).addTo(map);
 
-map.setMaxBounds(bounds);
+// vue initiale
 map.fitBounds(bounds);
-
-
-// ==============================
-// ZONE ORANGE VISUELLE (LOSANGE)
-// ==============================
-
-// centre de la carte (BASE coords)
-const centerX = baseWidth / 2;
-const centerY = baseHeight / 2;
-
-// taille zone
-const diamondWidth = 1180;
-const diamondHeight = 900;
-
-// points du losange
-const zonePolygon = [
-  [centerY - diamondHeight / 2, centerX], // haut
-  [centerY, centerX + diamondWidth / 2],   // droite
-  [centerY + diamondHeight / 2, centerX],  // bas
-  [centerY, centerX - diamondWidth / 2]    // gauche
-];
-
-// affichage sur la carte (IMPORTANT : SCALE appliqué)
-L.polygon(zonePolygon.map(p => [p[0] * SCALE, p[1] * SCALE]), {
-  color: "orange",
-  weight: 2,
-  fillColor: "orange",
-  fillOpacity: 0.2
-}).addTo(map);
+map.setMaxBounds(bounds);
 
 // ==============================
-// ICON
+// SAUVEGARDE VUE INITIALE
 // ==============================
+
+const initialCenter = map.getCenter();
+const initialZoom = map.getZoom();
+
+// ==============================
+// ICON MARKER
+// ==============================
+
 const customIcon = L.icon({
+
   iconUrl: 'marker.png',
-  iconSize: [25, 30],
-  iconAnchor: [12, 30]
+
+  iconSize: [30, 40],
+  iconAnchor: [20, 40],
+
+  popupAnchor: [0, -40]
+
 });
 
 // ==============================
 // LISTE
 // ==============================
+
 const list = document.getElementById("locationList");
+
 list.innerHTML = "";
 
 // ==============================
-// ZONE ORANGE (LOSANGE)
+// ZONE JOUABLE
 // ==============================
-const centerX = baseWidth / 2;
-const centerY = baseHeight / 2;
 
-const diamondWidth = 1180;
-const diamondHeight = 900;
+// coordonnées du contour jouable
+// format = [Y, X]
 
-function isInsideDiamond(x, y) {
-  const dx = Math.abs(x - centerX);
-  const dy = Math.abs(y - centerY);
+const playableZone = [
 
-  return ((dx / (diamondWidth / 2)) + (dy / (diamondHeight / 2))) <= 1;
+  [25, 1280],     // bas
+
+  [960, 2420],    // droite
+
+  [1885, 1285],   // haut
+
+  [960, 140],    // gauche
+
+];
+// ==============================
+// TEST SI POINT DANS POLYGONE
+// ==============================
+
+function isInsideZone(x, y) {
+
+  let inside = false;
+
+  for (
+    let i = 0, j = playableZone.length - 1;
+    i < playableZone.length;
+    j = i++
+  ) {
+
+    const xi = playableZone[i][1];
+    const yi = playableZone[i][0];
+
+    const xj = playableZone[j][1];
+    const yj = playableZone[j][0];
+
+    const intersect =
+      ((yi > y) !== (yj > y))
+      &&
+      (
+        x <
+        ((xj - xi) * (y - yi))
+        / (yj - yi)
+        + xi
+      );
+
+    if (intersect)
+      inside = !inside;
+  }
+
+  return inside;
 }
 
 // ==============================
-// LIEUX (BASE COORDS)
+// LOCATIONS
 // ==============================
+
 const locations = [
-  { name: "Fourmilière Alpha", coords: [480, 640], description: "Alliance FR01" },
-  { name: "Base Beta", coords: [350, 450], description: "Zone Nord" },
-  { name: "Camp Gamma", coords: [700, 800], description: "Zone Sud" }
+
+  {
+    name: "Alpha",
+    x: 1280,
+    y: 960
+  },
+
+  {
+    name: "Beta",
+    x: 1000,
+    y: 700
+  },
+
+  {
+    name: "Gamma",
+    x: 1600,
+    y: 1200
+  }
+
 ];
 
 // ==============================
-// MARKERS + LISTE (ZONE BLOQUÉE)
+// TRI ALPHABETIQUE
 // ==============================
+
+locations.sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
+
+// ==============================
+// MARKERS
+// ==============================
+
 locations.forEach(loc => {
 
-  const x = loc.coords[1];
-  const y = loc.coords[0];
+  const x = loc.x;
+  const y = loc.y;
 
-  // ❌ SI HORS ZONE → ON IGNORE COMPLETEMENT
-  if (!isInsideDiamond(x, y)) {
-    console.log("REFUS (hors zone) :", loc.name);
-    return;
-  }
+  // vérifie si dans la zone
+  if (!isInsideZone(x, y)) return;
 
-  // SCALE affichage
-  const coords = [y * SCALE, x * SCALE];
+  // leaflet = [y, x]
+  const leafletCoords = [y, x];
 
-  const marker = L.marker(coords, {
+  // marker
+  const marker = L.marker(leafletCoords, {
     icon: customIcon
   }).addTo(map);
 
+  // popup
   marker.bindPopup(`
-    <b>${loc.name}</b><br>
-    ${loc.description}
+    <div class="popup">
+      <h3>${loc.name}</h3>
+      <p>X : ${x}</p>
+      <p>Y : ${y}</p>
+    </div>
   `);
 
+  // élément liste
   const li = document.createElement("li");
+
   li.textContent = loc.name;
 
+  // clic liste
   li.onclick = () => {
-    map.setView(coords, 1);
+
+    map.flyTo(leafletCoords, 1, {
+      duration: 1.5
+    });
+
     marker.openPopup();
+
   };
 
+  // ajout liste
   list.appendChild(li);
+
+});
+
+// ==============================
+// BOUTON RESET VIEW
+// ==============================
+
+const resetControl = L.control({
+  position: 'topleft'
+});
+
+resetControl.onAdd = function () {
+
+  const div = L.DomUtil.create(
+    'div',
+    'leaflet-bar leaflet-control'
+  );
+
+  const button = L.DomUtil.create('a', '', div);
+
+  // icône style Google Maps
+  button.innerHTML = `
+  <svg width="18" height="18" viewBox="0 0 24 24">
+    <path fill="#333"
+      d="M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zm9 3h-2.07A7.002 7.002 0 0 0 13 5.07V3h-2v2.07A7.002 7.002 0 0 0 5.07 11H3v2h2.07A7.002 7.002 0 0 0 11 18.93V21h2v-2.07A7.002 7.002 0 0 0 18.93 13H21v-2zM12 17a5 5 0 1 1 0-10a5 5 0 0 1 0 10z"/>
+  </svg>
+  `;
+
+  button.href = "#";
+
+  button.title = "Vue initiale";
+
+  // taille bouton
+  button.style.width = "30px";
+  button.style.height = "30px";
+
+  // centrage
+  button.style.display = "flex";
+  button.style.alignItems = "center";
+  button.style.justifyContent = "center";
+
+  button.style.padding = "0";
+  button.style.margin = "0";
+
+  // empêche propagation
+  L.DomEvent.disableClickPropagation(div);
+
+  // clic bouton
+  L.DomEvent.on(button, 'click', function (e) {
+
+    L.DomEvent.preventDefault(e);
+
+    map.flyTo(initialCenter, initialZoom, {
+      duration: 1.5
+    });
+
+  });
+
+  return div;
+};
+
+resetControl.addTo(map);
+
+// ==============================
+// DEBUG COORDONNÉES
+// ==============================
+
+// clique sur la carte pour récupérer X/Y
+map.on('click', function(e) {
+
+  console.log(
+    "X :", Math.round(e.latlng.lng),
+    "Y :", Math.round(e.latlng.lat)
+  );
+
 });
