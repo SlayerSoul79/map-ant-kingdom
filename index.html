@@ -5,105 +5,97 @@
 
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
   <title>Carte The Ant Underground Kingdom</title>
 
   <!-- LEAFLET -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet/dist/leaflet.css"
-  >
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <!-- MARKER CLUSTER -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
-  >
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
-  >
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
 
-  <!-- CSS -->
+  <!-- TON CSS -->
   <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-  <h1>Interactive map - 1157</h1>
+<h1>Interactive map - 1157</h1>
 
-  <div id="container">
+<div id="container">
 
-    <!-- MAP -->
-    <div id="map"></div>
+  <!-- MAP -->
+  <div id="map"></div>
 
-    <!-- SIDEBAR -->
-    <div id="sidebar" class="collapsed">
+  <!-- COORDS -->
+  <div id="coords">
+    X: 0 | Y: 0
+  </div>
 
-      <!-- HANDLE MOBILE -->
-      <div id="sidebarHandle">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
 
-        <div id="sidebarBar"></div>
+    <h2>Inactive ant colonies</h2>
+
+    <!-- SEARCH -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search colony..."
+    >
+
+    <!-- LIST -->
+    <div id="locationList">
+
+      <!-- HAUT -->
+      <div class="category">
+
+        <h3 class="categoryTitle">
+          Haut
+        </h3>
+
+        <ul id="topList"></ul>
 
       </div>
 
-      <h2>Inactive ant colonies</h2>
+      <!-- BAS -->
+      <div class="category">
 
-      <!-- SEARCH -->
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Search colony..."
-      >
+        <h3 class="categoryTitle">
+          Bas
+        </h3>
 
-      <!-- LIST -->
-      <div id="locationList">
+        <ul id="bottomList"></ul>
 
-        <div class="category">
+      </div>
 
-          <h3 class="categoryTitle">
-            Haut
-          </h3>
+      <!-- GAUCHE -->
+      <div class="category">
 
-          <ul id="topList"></ul>
+        <h3 class="categoryTitle">
+          Gauche
+        </h3>
 
-        </div>
+        <ul id="leftList"></ul>
 
-        <div class="category">
+      </div>
 
-          <h3 class="categoryTitle">
-            Bas
-          </h3>
+      <!-- DROITE -->
+      <div class="category">
 
-          <ul id="bottomList"></ul>
+        <h3 class="categoryTitle">
+          Droite
+        </h3>
 
-        </div>
-
-        <div class="category">
-
-          <h3 class="categoryTitle">
-            Gauche
-          </h3>
-
-          <ul id="leftList"></ul>
-
-        </div>
-
-        <div class="category">
-
-          <h3 class="categoryTitle">
-            Droite
-          </h3>
-
-          <ul id="rightList"></ul>
-
-        </div>
+        <ul id="rightList"></ul>
 
       </div>
 
@@ -111,14 +103,16 @@
 
   </div>
 
-  <!-- LEAFLET -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</div>
 
-  <!-- CLUSTER -->
-  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<!-- LEAFLET -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <!-- JS -->
-  <script src="script.js"></script>
+<!-- MARKER CLUSTER -->
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<!-- TON JS -->
+<script src="script.js"></script>
 
 </body>
 </html>

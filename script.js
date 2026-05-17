@@ -30,23 +30,6 @@ map.fitBounds(bounds);
 map.setMaxBounds(bounds);
 
 // ==============================
-// MOBILE FIX
-// ==============================
-
-if (window.innerWidth <= 768) {
-
-  // zoom plus éloigné
-  map.setZoom(map.getZoom() - 0.8);
-
-  // empêche l'effet bounce
-  map.options.bounceAtZoomLimits = false;
-
-  // inertie mobile plus douce
-  map.options.inertia = false;
-
-}
-
-// ==============================
 // SAUVEGARDE VUE INITIALE
 // ==============================
 
@@ -541,32 +524,3 @@ map.on('click', function(e) {
   );
 
 });
-// refresh taille mobile
-window.addEventListener("resize", () => {
-
-  map.invalidateSize();
-
-});
-
-// FIX taille réelle mobile
-function resizeMapMobile() {
-
-  const vh = window.innerHeight;
-
-  document.getElementById("map").style.height =
-    vh * 0.65 + "px";
-
-  map.invalidateSize();
-}
-
-window.addEventListener(
-  "resize",
-  resizeMapMobile
-);
-
-window.addEventListener(
-  "orientationchange",
-  resizeMapMobile
-);
-
-resizeMapMobile();
