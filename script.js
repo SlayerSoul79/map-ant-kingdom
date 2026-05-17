@@ -2,86 +2,56 @@
 // MAP
 // ==============================
 
-const width = 2560;
-const height = 1920;
-
-const bounds = [
-  [0, 0],
-  [height, width]
-];
-
 const map = L.map('map', {
 
   crs: L.CRS.Simple,
 
-  minZoom: -2,
+  minZoom: -1.55,
   maxZoom: 2,
 
-  maxBounds: bounds,
-  maxBoundsViscosity: 1.0,
-
-  bounceAtZoomLimits: false,
-  inertia: false,
-
-  tap: false
+  tap: true,
+  touchZoom: true,
+  bounceAtZoomLimits: false
 
 });
+
+// taille réelle image
+const width = 2560;
+const height = 1920;
+
+// limites
+const bounds = [[0, 0], [height, width]];
 
 // image carte
 L.imageOverlay('map.png', bounds).addTo(map);
 
 // vue initiale
 map.fitBounds(bounds);
-
-// refresh taille
-setTimeout(() => {
-
-  map.invalidateSize();
-
-}, 200);
-
-window.addEventListener("resize", () => {
-
-  map.invalidateSize();
-
-});
+map.setMaxBounds(bounds);
 
 // ==============================
-// SIDEBAR MOBILE
+// MOBILE FIX
 // ==============================
 
-const sidebar =
-  document.getElementById("sidebar");
-
-const sidebarHandle =
-  document.getElementById("sidebarHandle");
-
-// mobile uniquement
 if (window.innerWidth <= 768) {
 
-  sidebar.classList.add("collapsed");
+  // zoom plus éloigné
+  map.setZoom(map.getZoom() - 0.8);
+
+  // empêche l'effet bounce
+  map.options.bounceAtZoomLimits = false;
+
+  // inertie mobile plus douce
+  map.options.inertia = false;
 
 }
 
-sidebarHandle.addEventListener("click", () => {
+// ==============================
+// SAUVEGARDE VUE INITIALE
+// ==============================
 
-  if (sidebar.classList.contains("collapsed")) {
-
-    sidebar.classList.remove("collapsed");
-
-    sidebar.classList.add("open");
-
-  }
-
-  else {
-
-    sidebar.classList.remove("open");
-
-    sidebar.classList.add("collapsed");
-
-  }
-
-});
+const initialCenter = map.getCenter();
+const initialZoom = map.getZoom();
 
 // ==============================
 // CLUSTER
@@ -103,7 +73,7 @@ const markerCluster =
 map.addLayer(markerCluster);
 
 // ==============================
-// ICON
+// ICON MARKER
 // ==============================
 
 const customIcon = L.icon({
@@ -111,7 +81,6 @@ const customIcon = L.icon({
   iconUrl: 'marker.png',
 
   iconSize: [30, 40],
-
   iconAnchor: [20, 40],
 
   popupAnchor: [0, -40]
@@ -119,7 +88,7 @@ const customIcon = L.icon({
 });
 
 // ==============================
-// LISTES
+// LISTES CATÉGORIES
 // ==============================
 
 const topList =
@@ -134,8 +103,99 @@ const leftList =
 const rightList =
   document.getElementById("rightList");
 
+// ==============================
+// SEARCH
+// ==============================
+
 const searchInput =
   document.getElementById("searchInput");
+
+// ==============================
+// ZONE JOUABLE
+// ==============================
+
+const playableZone = [
+
+  [25, 1280],
+  [960, 2420],
+  [1885, 1285],
+  [960, 140],
+
+];
+
+// ==============================
+// TEST SI POINT DANS ZONE
+// ==============================
+
+function isInsideZone(x, y) {
+
+  let inside = false;
+
+  for (
+    let i = 0, j = playableZone.length - 1;
+    i < playableZone.length;
+    j = i++
+  ) {
+
+    const xi = playableZone[i][1];
+    const yi = playableZone[i][0];
+
+    const xj = playableZone[j][1];
+    const yj = playableZone[j][0];
+
+    const intersect =
+      ((yi > y) !== (yj > y))
+      &&
+      (
+        x <
+        ((xj - xi) * (y - yi))
+        / (yj - yi)
+        + xi
+      );
+
+    if (intersect)
+      inside = !inside;
+  }
+
+  return inside;
+}
+
+// ==============================
+// CATÉGORIES
+// ==============================
+
+const centerX = 1280;
+const centerY = 960;
+
+function getCategory(x, y) {
+
+  const dx = x - centerX;
+  const dy = y - centerY;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+
+    return dx > 0
+      ? "right"
+      : "left";
+  }
+
+  return dy > 0
+    ? "bottom"
+    : "top";
+}
+
+// ==============================
+// TABLEAU MARKERS PAR CATÉGORIE
+// ==============================
+
+const categoryMarkers = {
+
+  top: [],
+  bottom: [],
+  left: [],
+  right: []
+
+};
 
 // ==============================
 // LOCATIONS
@@ -170,89 +230,84 @@ const locations = [
 ];
 
 // ==============================
-// CATEGORY
+// TRI ALPHABETIQUE
 // ==============================
 
-function getCategory(x, y) {
+locations.sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
 
-  const centerX = 1280;
-  const centerY = 960;
+// ==============================
+// TABLEAU DES MARKERS
+// ==============================
 
-  const dx = x - centerX;
-  const dy = y - centerY;
-
-  if (Math.abs(dx) > Math.abs(dy)) {
-
-    return dx > 0
-      ? "right"
-      : "left";
-  }
-
-  return dy > 0
-    ? "bottom"
-    : "top";
-}
+const allMarkers = [];
 
 // ==============================
 // MARKERS
 // ==============================
 
-const allMarkers = [];
-
 locations.forEach(loc => {
 
-  const leafletCoords = [
-    loc.y,
-    loc.x
-  ];
+  const x = loc.x;
+  const y = loc.y;
 
-  const marker = L.marker(
-    leafletCoords,
-    {
-      icon: customIcon
-    }
-  );
+  // filtre zone
+  if (!isInsideZone(x, y)) return;
+
+  // coordonnées leaflet
+  const leafletCoords = [y, x];
+
+  // création marker
+  const marker = L.marker(leafletCoords, {
+    icon: customIcon
+  });
 
   markerCluster.addLayer(marker);
 
+  // popup
   marker.bindPopup(`
     <div class="popup">
       <h3>${loc.name}</h3>
-      <p>X : ${loc.x}</p>
-      <p>Y : ${loc.y}</p>
+      <p>X : ${x}</p>
+      <p>Y : ${y}</p>
     </div>
   `);
 
+  // focus marker
   function focusMarker() {
 
-    map.flyTo(
-      leafletCoords,
-      1,
-      {
-        duration: 1.5
-      }
-    );
+    map.flyTo(leafletCoords, 1, {
+      duration: 1.5
+    });
 
     setTimeout(() => {
 
       marker.openPopup();
 
-    }, 700);
+    }, 800);
 
   }
 
-  marker.on("click", focusMarker);
+  // clic marker
+  marker.on('click', focusMarker);
 
-  const li =
-    document.createElement("li");
+  // élément liste
+  const li = document.createElement("li");
 
   li.textContent = loc.name;
 
+  li.dataset.name =
+    loc.name.toLowerCase();
+
+  // clic liste
   li.onclick = focusMarker;
 
+  // catégorie
   const category =
-    getCategory(loc.x, loc.y);
+    getCategory(x, y);
 
+  // ajout liste catégorie
   if (category === "top") {
 
     topList.appendChild(li);
@@ -271,19 +326,26 @@ locations.forEach(loc => {
 
   }
 
-  else {
+  else if (category === "right") {
 
     rightList.appendChild(li);
 
   }
 
+  // sauvegarde catégorie
+  categoryMarkers[category]
+    .push(marker);
+
+  // sauvegarde globale
   allMarkers.push({
 
     marker,
     li,
 
     name:
-      loc.name.toLowerCase()
+      loc.name.toLowerCase(),
+
+    category
 
   });
 
@@ -303,22 +365,22 @@ searchInput.addEventListener("input", () => {
     const match =
       item.name.includes(value);
 
+    // afficher / cacher liste
     item.li.style.display =
       match ? "block" : "none";
 
+    // afficher / cacher marker
     if (match) {
 
-      markerCluster.addLayer(
-        item.marker
-      );
+      markerCluster
+        .addLayer(item.marker);
 
     }
 
     else {
 
-      markerCluster.removeLayer(
-        item.marker
-      );
+      markerCluster
+        .removeLayer(item.marker);
 
     }
 
@@ -327,7 +389,7 @@ searchInput.addEventListener("input", () => {
 });
 
 // ==============================
-// CATÉGORIES
+// CATÉGORIES REPLIABLES
 // ==============================
 
 const categoryTitles =
@@ -345,9 +407,13 @@ categoryTitles.forEach(title => {
     const ul =
       title.nextElementSibling;
 
+    const category =
+      ul.id.replace("List", "");
+
     const isOpen =
       title.dataset.open === "true";
 
+    // fermer
     if (isOpen) {
 
       ul.style.display = "none";
@@ -357,8 +423,18 @@ categoryTitles.forEach(title => {
 
       title.dataset.open = "false";
 
+      // cacher markers
+      categoryMarkers[category]
+        .forEach(marker => {
+
+          markerCluster
+            .removeLayer(marker);
+
+        });
+
     }
 
+    // ouvrir
     else {
 
       ul.style.display = "block";
@@ -368,8 +444,131 @@ categoryTitles.forEach(title => {
 
       title.dataset.open = "true";
 
+      // afficher markers
+      categoryMarkers[category]
+        .forEach(marker => {
+
+          markerCluster
+            .addLayer(marker);
+
+        });
+
     }
 
   });
 
 });
+
+// ==============================
+// BOUTON RESET VIEW
+// ==============================
+
+const resetControl = L.control({
+  position: 'topleft'
+});
+
+resetControl.onAdd = function () {
+
+  const div = L.DomUtil.create(
+    'div',
+    'leaflet-bar leaflet-control'
+  );
+
+  const button =
+    L.DomUtil.create('a', '', div);
+
+  // icône cible
+  button.innerHTML = `
+  <svg width="18" height="18" viewBox="0 0 24 24">
+    <path fill="#333"
+      d="M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zm9 3h-2.07A7.002 7.002 0 0 0 13 5.07V3h-2v2.07A7.002 7.002 0 0 0 5.07 11H3v2h2.07A7.002 7.002 0 0 0 11 18.93V21h2v-2.07A7.002 7.002 0 0 0 18.93 13H21v-2zM12 17a5 5 0 1 1 0-10a5 5 0 0 1 0 10z"/>
+  </svg>
+  `;
+
+  button.href = "#";
+
+  button.title = "Vue initiale";
+
+  // taille
+  button.style.width = "30px";
+  button.style.height = "30px";
+
+  // centrage
+  button.style.display = "flex";
+  button.style.alignItems = "center";
+  button.style.justifyContent = "center";
+
+  button.style.padding = "0";
+  button.style.margin = "0";
+
+  // empêche propagation
+  L.DomEvent
+    .disableClickPropagation(div);
+
+  // clic bouton
+  L.DomEvent.on(
+    button,
+    'click',
+    function (e) {
+
+      L.DomEvent.preventDefault(e);
+
+      map.flyTo(
+        initialCenter,
+        initialZoom,
+        {
+          duration: 1.5
+        }
+      );
+
+    }
+  );
+
+  return div;
+};
+
+resetControl.addTo(map);
+
+// ==============================
+// DEBUG COORDONNÉES
+// ==============================
+
+map.on('click', function(e) {
+
+  console.log(
+    "X :", Math.round(e.latlng.lng),
+    "Y :", Math.round(e.latlng.lat)
+  );
+
+});
+
+});
+// refresh taille mobile
+window.addEventListener("resize", () => {
+
+  map.invalidateSize();
+
+});
+
+// FIX taille réelle mobile
+function resizeMapMobile() {
+
+  const vh = window.innerHeight;
+
+  document.getElementById("map").style.height =
+    vh * 0.65 + "px";
+
+  map.invalidateSize();
+}
+
+window.addEventListener(
+  "resize",
+  resizeMapMobile
+);
+
+window.addEventListener(
+  "orientationchange",
+  resizeMapMobile
+);
+
+resizeMapMobile();
