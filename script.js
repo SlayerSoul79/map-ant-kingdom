@@ -6,13 +6,14 @@ const map = L.map('map', {
 
   crs: L.CRS.Simple,
 
-  minZoom: -1.55,
+  minZoom: -2.5,
   maxZoom: 2,
 
   tap: true,
   touchZoom: true,
-  bounceAtZoomLimits: false
+  bounceAtZoomLimits: false,
 
+  inertia: false
 });
 
 // taille réelle image
@@ -27,14 +28,15 @@ L.imageOverlay('map.png', bounds).addTo(map);
 
 // vue initiale
 map.fitBounds(bounds);
+
+map.invalidateSize();
+
 map.setMaxBounds(bounds);
 
 // bloque totalement le déplacement hors carte
 map.options.maxBoundsViscosity = 1.0;
 
-// empêche le bounce mobile
-map.dragging.enable();
-
+// empêche le drag hors limites
 map.on("drag", function() {
 
   map.panInsideBounds(bounds, {
@@ -49,13 +51,10 @@ map.on("drag", function() {
 
 if (window.innerWidth <= 768) {
 
-  // zoom plus éloigné
-  map.setZoom(map.getZoom() - 2);
+  // zoom mobile moins proche
+  map.setZoom(map.getZoom() - 0.7);
 
-  // empêche l'effet bounce
-  map.options.bounceAtZoomLimits = false;
-
-  // inertie mobile plus douce
+  // désactive l'inertie mobile
   map.options.inertia = false;
 
 }
@@ -555,7 +554,11 @@ map.on('click', function(e) {
   );
 
 });
-// refresh taille mobile
+
+// ==============================
+// REFRESH TAILLE MAP
+// ==============================
+
 window.addEventListener("resize", () => {
 
   map.invalidateSize();
