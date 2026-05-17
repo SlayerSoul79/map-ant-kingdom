@@ -30,6 +30,34 @@ map.fitBounds(bounds);
 map.setMaxBounds(bounds);
 
 // ==============================
+// ZOOM MOBILE
+// ==============================
+
+if (window.innerWidth <= 768) {
+
+  map.setZoom(map.getZoom() - 0.5);
+
+}
+
+// bloque le bounce mobile
+document.body.addEventListener(
+  'touchmove',
+  function(e) {
+
+    if (
+      sidebar.contains(e.target) ||
+      document.getElementById("locationList").contains(e.target)
+    ) {
+      return;
+    }
+
+    e.preventDefault();
+
+  },
+  { passive: false }
+);
+
+// ==============================
 // SAUVEGARDE VUE INITIALE
 // ==============================
 
