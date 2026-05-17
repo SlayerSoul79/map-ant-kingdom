@@ -2,26 +2,30 @@
 // MAP
 // ==============================
 
+const width = 2560;
+const height = 1920;
+
+const bounds = [
+  [0, 0],
+  [height, width]
+];
+
 const map = L.map('map', {
 
   crs: L.CRS.Simple,
 
-  minZoom: -2.5,
+  minZoom: -2,
   maxZoom: 2,
 
-  tap: true,
-  touchZoom: true,
+  maxBounds: bounds,
+  maxBoundsViscosity: 1.0,
+
   bounceAtZoomLimits: false,
+  inertia: false,
 
-  inertia: false
+  tap: false
+
 });
-
-// taille réelle image
-const width = 2560;
-const height = 1920;
-
-// limites
-const bounds = [[0, 0], [height, width]];
 
 // image carte
 L.imageOverlay('map.png', bounds).addTo(map);
@@ -29,35 +33,30 @@ L.imageOverlay('map.png', bounds).addTo(map);
 // vue initiale
 map.fitBounds(bounds);
 
-map.invalidateSize();
-
-map.setMaxBounds(bounds);
-
-// bloque totalement le déplacement hors carte
-map.options.maxBoundsViscosity = 1.0;
-
-// empêche le drag hors limites
-map.on("drag", function() {
-
-  map.panInsideBounds(bounds, {
-    animate: false
-  });
-
-});
-
 // ==============================
-// MOBILE FIX
+// FIX MOBILE
 // ==============================
 
 if (window.innerWidth <= 768) {
 
-  // zoom mobile moins proche
-  map.setZoom(map.getZoom() - 0.7);
-
-  // désactive l'inertie mobile
-  map.options.inertia = false;
+  // petit recul seulement
+  map.setZoom(map.getZoom() - 0.3);
 
 }
+
+// force Leaflet à recalculer
+setTimeout(() => {
+
+  map.invalidateSize();
+
+}, 200);
+
+// resize mobile
+window.addEventListener('resize', () => {
+
+  map.invalidateSize();
+
+});
 
 // ==============================
 // SAUVEGARDE VUE INITIALE

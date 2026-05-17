@@ -304,93 +304,27 @@ h1 {
     display: flex;
     flex-direction: column;
 
-    position: relative;
-
-    width: 100%;
-
-    min-height: calc(100dvh - 60px);
-
-    overflow: visible;
+    height: calc(100dvh - 60px);
   }
-
-  /* MAP */
 
   #map {
 
     width: 100%;
-
     height: 65dvh;
 
     flex-shrink: 0;
   }
 
-  /* SIDEBAR */
-
   #sidebar {
-
-    position: relative;
 
     width: 100%;
 
-    min-height: 35dvh;
-
-    border-left: none;
-
-    border-top: 1px solid #444;
+    flex: 1;
 
     overflow: hidden;
   }
 
-  /* LIST */
-
-  #locationList {
-
-    overflow-y: auto;
-
-    max-height: 60dvh;
-
-    -webkit-overflow-scrolling: touch;
-
-    padding-bottom: 120px;
-  }
-
-  /* ITEMS */
-
-  #locationList li {
-
-    padding: 16px;
-
-    font-size: 16px;
-  }
-
-  /* ZOOM BUTTONS */
-
-  .leaflet-control-zoom a,
-  .leaflet-bar a {
-
-    width: 42px !important;
-    height: 42px !important;
-
-    line-height: 42px !important;
-
-    font-size: 22px !important;
-  }
-
-  /* POPUP */
-
-  .leaflet-popup-content {
-
-    font-size: 16px;
-  }
-
-  /* TITLE */
-
-  h1 {
-
-    font-size: 20px;
-  }
 }
-
 /* ============================= */
 /* ANTI BOUNCE */
 /* ============================= */
