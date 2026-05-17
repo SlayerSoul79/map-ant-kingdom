@@ -6,12 +6,13 @@ const map = L.map('map', {
 
   crs: L.CRS.Simple,
 
-  minZoom: -1.55,
+  minZoom: -2,
   maxZoom: 2,
 
   tap: true,
   touchZoom: true,
   bounceAtZoomLimits: false
+
 });
 
 // taille réelle image
@@ -43,7 +44,7 @@ const customIcon = L.icon({
 
   iconUrl: 'marker.png',
 
-  iconSize: [30, 40],
+  iconSize: [40, 40],
   iconAnchor: [20, 40],
 
   popupAnchor: [0, -40]
@@ -62,22 +63,35 @@ list.innerHTML = "";
 // ZONE JOUABLE
 // ==============================
 
-// coordonnées du contour jouable
 // format = [Y, X]
 
 const playableZone = [
 
-  [25, 1280],     // bas
-
-  [960, 2420],    // droite
-
-  [1885, 1285],   // haut
-
-  [960, 140],    // gauche
+  [80, 1280],
+  [470, 2450],
+  [950, 2200],
+  [1820, 1280],
+  [1400, 420],
+  [960, 40]
 
 ];
+
 // ==============================
-// TEST SI POINT DANS POLYGONE
+// AFFICHAGE ZONE
+// ==============================
+
+L.polygon(playableZone, {
+
+  color: "orange",
+  weight: 2,
+
+  fillColor: "orange",
+  fillOpacity: 0.15
+
+}).addTo(map);
+
+// ==============================
+// TEST SI POINT DANS ZONE
 // ==============================
 
 function isInsideZone(x, y) {
@@ -138,10 +152,11 @@ const locations = [
   },
 
   {
-    name: "test 2",
-    x: 1100,
-    y: 800
-  },
+    name: "Delta",
+    x: 1400,
+    y: 900
+  }
+
 ];
 
 // ==============================
@@ -161,13 +176,13 @@ locations.forEach(loc => {
   const x = loc.x;
   const y = loc.y;
 
-  // vérifie si dans la zone
+  // filtre zone
   if (!isInsideZone(x, y)) return;
 
-  // leaflet = [y, x]
+  // Leaflet = [Y, X]
   const leafletCoords = [y, x];
 
-  // marker
+  // création marker
   const marker = L.marker(leafletCoords, {
     icon: customIcon
   }).addTo(map);
@@ -181,21 +196,31 @@ locations.forEach(loc => {
     </div>
   `);
 
+  // fonction focus
+  function focusMarker() {
+
+    map.flyTo(leafletCoords, 1, {
+      duration: 1.5
+    });
+
+    setTimeout(() => {
+
+      marker.openPopup();
+
+    }, 800);
+
+  }
+
+  // clic marker
+  marker.on('click', focusMarker);
+
   // élément liste
   const li = document.createElement("li");
 
   li.textContent = loc.name;
 
   // clic liste
-  li.onclick = () => {
-
-    map.flyTo(leafletCoords, 1, {
-      duration: 1.5
-    });
-
-    marker.openPopup();
-
-  };
+  li.onclick = focusMarker;
 
   // ajout liste
   list.appendChild(li);
@@ -219,7 +244,7 @@ resetControl.onAdd = function () {
 
   const button = L.DomUtil.create('a', '', div);
 
-  // icône style Google Maps
+  // icône cible
   button.innerHTML = `
   <svg width="18" height="18" viewBox="0 0 24 24">
     <path fill="#333"
@@ -231,7 +256,7 @@ resetControl.onAdd = function () {
 
   button.title = "Vue initiale";
 
-  // taille bouton
+  // taille
   button.style.width = "30px";
   button.style.height = "30px";
 
@@ -266,7 +291,6 @@ resetControl.addTo(map);
 // DEBUG COORDONNÉES
 // ==============================
 
-// clique sur la carte pour récupérer X/Y
 map.on('click', function(e) {
 
   console.log(
