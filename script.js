@@ -44,7 +44,7 @@ const customIcon = L.icon({
 
   iconUrl: 'marker.png',
 
-  iconSize: [40, 40],
+  iconSize: [30, 40],
   iconAnchor: [20, 40],
 
   popupAnchor: [0, -40]
