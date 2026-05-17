@@ -563,3 +563,29 @@ window.addEventListener("resize", () => {
   map.invalidateSize();
 
 });
+
+// ==============================
+// SIDEBAR MOBILE SLIDE
+// ==============================
+
+const sidebar =
+  document.getElementById("sidebar");
+
+const sidebarHandle =
+  document.getElementById("sidebarHandle");
+
+if (window.innerWidth <= 768) {
+
+  sidebarHandle.addEventListener("click", () => {
+
+    sidebar.classList.toggle("open");
+
+    setTimeout(() => {
+
+      map.invalidateSize();
+
+    }, 310);
+
+  });
+
+}
