@@ -28,6 +28,11 @@ L.imageOverlay('map.png', bounds).addTo(map);
 // vue initiale
 map.fitBounds(bounds);
 map.setMaxBounds(bounds);
+setTimeout(() => {
+
+  map.invalidateSize();
+
+}, 100);
 
 // ==============================
 // SAUVEGARDE VUE INITIALE
