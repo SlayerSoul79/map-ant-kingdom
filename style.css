@@ -23,17 +23,17 @@ h1 {
 
   margin: 0;
 
-  padding: 10px;
-
   height: 60px;
 
-  box-sizing: border-box;
-
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   font-size: 24px;
 
   border-bottom: 1px solid #333;
+
+  box-sizing: border-box;
 }
 
 /* ============================= */
@@ -60,14 +60,13 @@ h1 {
 
   flex: 1;
 
-  width: 100%;
   height: 100%;
 
   background: #000;
 }
 
 /* ============================= */
-/* SIDEBAR */
+/* SIDEBAR PC */
 /* ============================= */
 
 #sidebar {
@@ -83,10 +82,14 @@ h1 {
 
   overflow: hidden;
 
+  flex-shrink: 0;
+
   z-index: 1000;
 }
 
+/* ============================= */
 /* HANDLE */
+/* ============================= */
 
 #sidebarHandle {
 
@@ -156,11 +159,12 @@ h1 {
   flex: 1;
 
   overflow-y: auto;
-
   overflow-x: hidden;
 }
 
+/* ============================= */
 /* ITEMS */
+/* ============================= */
 
 #locationList li {
 
@@ -218,9 +222,9 @@ h1 {
 
   #container {
 
-    display: block;
-
     height: calc(100dvh - 60px);
+
+    overflow: hidden;
   }
 
   /* MAP */
@@ -231,7 +235,7 @@ h1 {
     height: 100%;
   }
 
-  /* SIDEBAR */
+  /* SIDEBAR MOBILE */
 
   #sidebar {
 
@@ -276,11 +280,11 @@ h1 {
 
     height: 50px;
 
-    flex-shrink: 0;
-
     background: #2a2a2a;
 
     border-bottom: 1px solid #444;
+
+    flex-shrink: 0;
 
     cursor: pointer;
   }
@@ -289,7 +293,7 @@ h1 {
 
   #locationList {
 
-    padding-bottom: 120px;
+    padding-bottom: 100px;
   }
 
   /* ITEMS */

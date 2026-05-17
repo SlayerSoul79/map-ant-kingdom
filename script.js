@@ -541,8 +541,6 @@ map.on('click', function(e) {
   );
 
 });
-
-});
 // refresh taille mobile
 window.addEventListener("resize", () => {
 
