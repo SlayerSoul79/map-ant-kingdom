@@ -311,22 +311,11 @@ resetControl.addTo(map);
 
 map.on('click', function (e) {
 
-  if (!e.latlng) return;
-
   const x = Math.round(e.latlng.lng);
   const y = Math.round(e.latlng.lat);
 
   console.log("X:", x, "Y:", y);
 
-  const xInput = document.getElementById("coordX");
-  const yInput = document.getElementById("coordY");
-
-  if (xInput) xInput.value = x;
-  if (yInput) yInput.value = y;
-
-  if (typeof openModal === "function") {
-    openModal();
-  }
 });
 
 // ==============================
