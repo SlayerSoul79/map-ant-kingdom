@@ -393,3 +393,48 @@ function addMarker() {
   document.getElementById("coordX").value = "";
   document.getElementById("coordY").value = "";
 }
+
+// ==============================
+// SYSTEME DE COORDONNEES LOGIQUES (0 → 1200)
+// ==============================
+
+const GRID_SIZE = 1200;
+
+// ⚠️ adapte ces 4 points à TA zone actuelle Leaflet
+const zone = {
+  topLeft:     { x: 140,  y: 140 },
+  topRight:    { x: 2420, y: 140 },
+  bottomRight: { x: 2420, y: 1885 },
+  bottomLeft:  { x: 140,  y: 1885 }
+};
+
+// logique → leaflet
+function toLeafletCoords(x, y) {
+
+  const lx =
+    zone.topLeft.x +
+    (y / GRID_SIZE) * (zone.topRight.x - zone.topLeft.x);
+
+  const ly =
+    zone.topLeft.y +
+    (x / GRID_SIZE) * (zone.bottomLeft.y - zone.topLeft.y);
+
+  return [ly, lx];
+}
+
+// leaflet → logique
+function toLogicalCoords(lng, lat) {
+
+  const x =
+    ((lat - zone.topLeft.y) /
+    (zone.bottomLeft.y - zone.topLeft.y)) * GRID_SIZE;
+
+  const y =
+    ((lng - zone.topLeft.x) /
+    (zone.topRight.x - zone.topLeft.x)) * GRID_SIZE;
+
+  return {
+    x: Math.round(x),
+    y: Math.round(y)
+  };
+}
