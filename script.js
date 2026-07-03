@@ -395,46 +395,54 @@ function addMarker() {
 }
 
 // ==============================
-// SYSTEME DE COORDONNEES LOGIQUES (0 → 1200)
+// SYSTÈME DE COORDONNÉES (0 → 1200)
 // ==============================
 
-const GRID_SIZE = 1200;
+// Coin haut    = (0,0)
+// Coin droit   = (0,1200)
+// Coin bas     = (1200,1200)
+// Coin gauche  = (1200,0)
 
-// ⚠️ adapte ces 4 points à TA zone actuelle Leaflet
-const zone = {
-  topLeft:     { x: 140,  y: 140 },
-  topRight:    { x: 2420, y: 140 },
-  bottomRight: { x: 2420, y: 1885 },
-  bottomLeft:  { x: 140,  y: 1885 }
+const virtualSize = 1200;
+
+const topPoint = {
+  x: 1280,
+  y: 25
 };
 
-// logique → leaflet
-function toLeafletCoords(x, y) {
+const rightPoint = {
+  x: 2420,
+  y: 960
+};
 
-  const lx =
-    zone.topLeft.x +
-    (y / GRID_SIZE) * (zone.topRight.x - zone.topLeft.x);
+const bottomPoint = {
+  x: 1285,
+  y: 1885
+};
 
-  const ly =
-    zone.topLeft.y +
-    (x / GRID_SIZE) * (zone.bottomLeft.y - zone.topLeft.y);
+const leftPoint = {
+  x: 140,
+  y: 960
+};
 
-  return [ly, lx];
-}
+// Convertit les coordonnées virtuelles vers la carte
+function virtualToMap(x, y) {
 
-// leaflet → logique
-function toLogicalCoords(lng, lat) {
+  const u = y / virtualSize;
+  const v = x / virtualSize;
 
-  const x =
-    ((lat - zone.topLeft.y) /
-    (zone.bottomLeft.y - zone.topLeft.y)) * GRID_SIZE;
+  const mapX =
+      topPoint.x
+    + u * (rightPoint.x - topPoint.x)
+    + v * (leftPoint.x - topPoint.x);
 
-  const y =
-    ((lng - zone.topLeft.x) /
-    (zone.topRight.x - zone.topLeft.x)) * GRID_SIZE;
+  const mapY =
+      topPoint.y
+    + u * (rightPoint.y - topPoint.y)
+    + v * (leftPoint.y - topPoint.y);
 
   return {
-    x: Math.round(x),
-    y: Math.round(y)
+    x: mapX,
+    y: mapY
   };
 }
