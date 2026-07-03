@@ -311,11 +311,18 @@ resetControl.addTo(map);
 
 map.on('click', function (e) {
 
+  if (!e.latlng) return;
+
   const x = Math.round(e.latlng.lng);
   const y = Math.round(e.latlng.lat);
 
   console.log("X:", x, "Y:", y);
 
+  const xInput = document.getElementById("coordX");
+  const yInput = document.getElementById("coordY");
+
+  if (xInput) xInput.value = x;
+  if (yInput) yInput.value = y;
 });
 
 // ==============================
@@ -345,33 +352,37 @@ if (sidebar && sidebarHandle) {
 // MODAL
 // ==============================
 
-function openModal() {
-  const modal = document.getElementById("markerModal");
-  if (modal) modal.style.display = "block";
-}
-
-function closeModal() {
-  const modal = document.getElementById("markerModal");
-  if (modal) modal.style.display = "none";
-}
-
 function addMarker() {
 
-  const name = document.getElementById("markerName")?.value;
-  const x = parseInt(document.getElementById("coordX")?.value);
-  const y = parseInt(document.getElementById("coordY")?.value);
+  const name = document.getElementById("markerName").value;
+  const x = parseInt(document.getElementById("coordX").value);
+  const y = parseInt(document.getElementById("coordY").value);
 
   if (!name || isNaN(x) || isNaN(y)) {
     alert("Remplis tous les champs !");
     return;
   }
 
-  if (x < 0 || x > 1200 || y < 0 || y > 1200) {
-    alert("Coordonnées invalides !");
-    return;
-  }
+  const leafletCoords = [y, x];
 
-  console.log("Marker ajouté :", { name, x, y });
+  const marker = L.marker(leafletCoords, {
+    icon: customIcon
+  });
+
+  marker.bindPopup(`
+    <div class="popup">
+      <h3>${name}</h3>
+      <p>X : ${x}</p>
+      <p>Y : ${y}</p>
+    </div>
+  `);
+
+  markerCluster.addLayer(marker);
 
   closeModal();
+
+  // reset champs
+  document.getElementById("markerName").value = "";
+  document.getElementById("coordX").value = "";
+  document.getElementById("coordY").value = "";
 }
