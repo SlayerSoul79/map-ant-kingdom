@@ -206,7 +206,7 @@ h1 {
 }
 
 /* ============================= */
-/* MODAL */
+/* MODAL 
 /* ============================= */
 
 .modal {
@@ -219,14 +219,16 @@ h1 {
 
   background: rgba(0, 0, 0, 0.6);
 
-  z-index: 99999999; /* IMPORTANT */
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 99999999;
 }
 
+/* boîte centrée */
 .modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
   background: white;
   color: black;
 
@@ -234,8 +236,6 @@ h1 {
   width: 320px;
 
   border-radius: 10px;
-
-  z-index: 100000000;
 }
 
 /* ============================= */
