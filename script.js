@@ -40,18 +40,12 @@ const initialZoom = map.getZoom();
 // CLUSTER
 // ==============================
 
-const markerCluster =
-  L.markerClusterGroup({
-
-    showCoverageOnHover: false,
-
-    spiderfyOnMaxZoom: true,
-
-    zoomToBoundsOnClick: true,
-
-    maxClusterRadius: 60
-
-  });
+const markerCluster = L.markerClusterGroup({
+  showCoverageOnHover: false,
+  spiderfyOnMaxZoom: true,
+  zoomToBoundsOnClick: true,
+  maxClusterRadius: 60
+});
 
 map.addLayer(markerCluster);
 
@@ -60,54 +54,36 @@ map.addLayer(markerCluster);
 // ==============================
 
 const customIcon = L.icon({
-
   iconUrl: 'marker.png',
-
   iconSize: [30, 40],
   iconAnchor: [20, 40],
-
   popupAnchor: [0, -40]
-
 });
 
 // ==============================
-// LISTES CATÉGORIES
+// DOM SAFE ACCESS
 // ==============================
 
-const topList =
-  document.getElementById("topList");
+const topList = document.getElementById("topList");
+const bottomList = document.getElementById("bottomList");
+const leftList = document.getElementById("leftList");
+const rightList = document.getElementById("rightList");
 
-const bottomList =
-  document.getElementById("bottomList");
-
-const leftList =
-  document.getElementById("leftList");
-
-const rightList =
-  document.getElementById("rightList");
-
-// ==============================
-// SEARCH
-// ==============================
-
-const searchInput =
-  document.getElementById("searchInput");
+const searchInput = document.getElementById("searchInput");
 
 // ==============================
 // ZONE JOUABLE
 // ==============================
 
 const playableZone = [
-
   [25, 1280],
   [960, 2420],
   [1885, 1285],
   [960, 140],
-
 ];
 
 // ==============================
-// TEST SI POINT DANS ZONE
+// SAFE ZONE CHECK
 // ==============================
 
 function isInsideZone(x, y) {
@@ -127,24 +103,17 @@ function isInsideZone(x, y) {
     const yj = playableZone[j][0];
 
     const intersect =
-      ((yi > y) !== (yj > y))
-      &&
-      (
-        x <
-        ((xj - xi) * (y - yi))
-        / (yj - yi)
-        + xi
-      );
+      ((yi > y) !== (yj > y)) &&
+      (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
 
-    if (intersect)
-      inside = !inside;
+    if (intersect) inside = !inside;
   }
 
   return inside;
 }
 
 // ==============================
-// CATÉGORIES
+// CATEGORY
 // ==============================
 
 const centerX = 1280;
@@ -156,75 +125,37 @@ function getCategory(x, y) {
   const dy = y - centerY;
 
   if (Math.abs(dx) > Math.abs(dy)) {
-
-    return dx > 0
-      ? "right"
-      : "left";
+    return dx > 0 ? "right" : "left";
   }
 
-  return dy > 0
-    ? "bottom"
-    : "top";
+  return dy > 0 ? "bottom" : "top";
 }
 
 // ==============================
-// TABLEAU MARKERS PAR CATÉGORIE
+// DATA
 // ==============================
 
 const categoryMarkers = {
-
   top: [],
   bottom: [],
   left: [],
   right: []
-
 };
+
+const allMarkers = [];
 
 // ==============================
 // LOCATIONS
 // ==============================
 
 const locations = [
-
-  {
-    name: "Alpha",
-    x: 1280,
-    y: 960
-  },
-
-  {
-    name: "Beta",
-    x: 1000,
-    y: 700
-  },
-
-  {
-    name: "Gamma",
-    x: 1600,
-    y: 1200
-  },
-
-  {
-    name: "Delta",
-    x: 1400,
-    y: 900
-  }
-
+  { name: "Alpha", x: 1280, y: 960 },
+  { name: "Beta", x: 1000, y: 700 },
+  { name: "Gamma", x: 1600, y: 1200 },
+  { name: "Delta", x: 1400, y: 900 }
 ];
 
-// ==============================
-// TRI ALPHABETIQUE
-// ==============================
-
-locations.sort((a, b) =>
-  a.name.localeCompare(b.name)
-);
-
-// ==============================
-// TABLEAU DES MARKERS
-// ==============================
-
-const allMarkers = [];
+locations.sort((a, b) => a.name.localeCompare(b.name));
 
 // ==============================
 // MARKERS
@@ -235,20 +166,16 @@ locations.forEach(loc => {
   const x = loc.x;
   const y = loc.y;
 
-  // filtre zone
   if (!isInsideZone(x, y)) return;
 
-  // coordonnées leaflet
   const leafletCoords = [y, x];
 
-  // création marker
   const marker = L.marker(leafletCoords, {
     icon: customIcon
   });
 
   markerCluster.addLayer(marker);
 
-  // popup
   marker.bindPopup(`
     <div class="popup">
       <h3>${loc.name}</h3>
@@ -257,185 +184,93 @@ locations.forEach(loc => {
     </div>
   `);
 
-  // focus marker
   function focusMarker() {
-
-    map.flyTo(leafletCoords, 1, {
-      duration: 1.5
-    });
+    map.flyTo(leafletCoords, 1, { duration: 1.5 });
 
     setTimeout(() => {
-
       marker.openPopup();
-
     }, 800);
-
   }
 
-  // clic marker
   marker.on('click', focusMarker);
 
-  // élément liste
   const li = document.createElement("li");
-
   li.textContent = loc.name;
-
-  li.dataset.name =
-    loc.name.toLowerCase();
-
-  // clic liste
+  li.dataset.name = loc.name.toLowerCase();
   li.onclick = focusMarker;
 
-  // catégorie
-  const category =
-    getCategory(x, y);
+  const category = getCategory(x, y);
 
-  // ajout liste catégorie
-  if (category === "top") {
+  if (topList && category === "top") topList.appendChild(li);
+  if (bottomList && category === "bottom") bottomList.appendChild(li);
+  if (leftList && category === "left") leftList.appendChild(li);
+  if (rightList && category === "right") rightList.appendChild(li);
 
-    topList.appendChild(li);
+  categoryMarkers[category].push(marker);
 
-  }
-
-  else if (category === "bottom") {
-
-    bottomList.appendChild(li);
-
-  }
-
-  else if (category === "left") {
-
-    leftList.appendChild(li);
-
-  }
-
-  else if (category === "right") {
-
-    rightList.appendChild(li);
-
-  }
-
-  // sauvegarde catégorie
-  categoryMarkers[category]
-    .push(marker);
-
-  // sauvegarde globale
   allMarkers.push({
-
     marker,
     li,
-
-    name:
-      loc.name.toLowerCase(),
-
+    name: loc.name.toLowerCase(),
     category
-
   });
-
 });
 
 // ==============================
-// SEARCH
+// SEARCH SAFE
 // ==============================
 
-searchInput.addEventListener("input", () => {
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
 
-  const value =
-    searchInput.value.toLowerCase();
+    const value = searchInput.value.toLowerCase();
 
-  allMarkers.forEach(item => {
+    allMarkers.forEach(item => {
 
-    const match =
-      item.name.includes(value);
+      const match = item.name.includes(value);
 
-    // afficher / cacher liste
-    item.li.style.display =
-      match ? "block" : "none";
+      item.li.style.display = match ? "block" : "none";
 
-    // afficher / cacher marker
-    if (match) {
+      if (match) markerCluster.addLayer(item.marker);
+      else markerCluster.removeLayer(item.marker);
 
-      markerCluster
-        .addLayer(item.marker);
-
-    }
-
-    else {
-
-      markerCluster
-        .removeLayer(item.marker);
-
-    }
+    });
 
   });
-
-});
+}
 
 // ==============================
-// CATÉGORIES REPLIABLES
+// CATEGORY TOGGLE SAFE
 // ==============================
 
-const categoryTitles =
-  document.querySelectorAll(".categoryTitle");
+const categoryTitles = document.querySelectorAll(".categoryTitle");
 
 categoryTitles.forEach(title => {
 
-  title.innerHTML =
-    `▼ ${title.innerText}`;
-
+  title.innerHTML = `▼ ${title.innerText}`;
   title.dataset.open = "true";
 
   title.addEventListener("click", () => {
 
-    const ul =
-      title.nextElementSibling;
+    const ul = title.nextElementSibling;
+    const category = ul.id.replace("List", "");
+    const isOpen = title.dataset.open === "true";
 
-    const category =
-      ul.id.replace("List", "");
-
-    const isOpen =
-      title.dataset.open === "true";
-
-    // fermer
     if (isOpen) {
 
       ul.style.display = "none";
-
-      title.innerHTML =
-        `▶ ${title.innerText.replace("▼ ", "")}`;
-
+      title.innerHTML = `▶ ${title.innerText.replace("▼ ", "")}`;
       title.dataset.open = "false";
 
-      // cacher markers
-      categoryMarkers[category]
-        .forEach(marker => {
+      categoryMarkers[category].forEach(m => markerCluster.removeLayer(m));
 
-          markerCluster
-            .removeLayer(marker);
-
-        });
-
-    }
-
-    // ouvrir
-    else {
+    } else {
 
       ul.style.display = "block";
-
-      title.innerHTML =
-        `▼ ${title.innerText.replace("▶ ", "")}`;
-
+      title.innerHTML = `▼ ${title.innerText.replace("▶ ", "")}`;
       title.dataset.open = "true";
 
-      // afficher markers
-      categoryMarkers[category]
-        .forEach(marker => {
-
-          markerCluster
-            .addLayer(marker);
-
-        });
-
+      categoryMarkers[category].forEach(m => markerCluster.addLayer(m));
     }
 
   });
@@ -443,69 +278,27 @@ categoryTitles.forEach(title => {
 });
 
 // ==============================
-// BOUTON RESET VIEW
+// RESET BUTTON
 // ==============================
 
-const resetControl = L.control({
-  position: 'topleft'
-});
+const resetControl = L.control({ position: 'topleft' });
 
 resetControl.onAdd = function () {
 
-  const div = L.DomUtil.create(
-    'div',
-    'leaflet-bar leaflet-control'
-  );
+  const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+  const button = L.DomUtil.create('a', '', div);
 
-  const button =
-    L.DomUtil.create('a', '', div);
-
-  // icône cible
-  button.innerHTML = `
-  <svg width="18" height="18" viewBox="0 0 24 24">
-    <path fill="#333"
-      d="M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zm9 3h-2.07A7.002 7.002 0 0 0 13 5.07V3h-2v2.07A7.002 7.002 0 0 0 5.07 11H3v2h2.07A7.002 7.002 0 0 0 11 18.93V21h2v-2.07A7.002 7.002 0 0 0 18.93 13H21v-2zM12 17a5 5 0 1 1 0-10a5 5 0 0 1 0 10z"/>
-  </svg>
-  `;
-
+  button.innerHTML = "⟳";
   button.href = "#";
-
   button.title = "Vue initiale";
 
-  // taille
-  button.style.width = "30px";
-  button.style.height = "30px";
+  L.DomEvent.disableClickPropagation(div);
 
-  // centrage
-  button.style.display = "flex";
-  button.style.alignItems = "center";
-  button.style.justifyContent = "center";
+  L.DomEvent.on(button, 'click', function (e) {
+    L.DomEvent.preventDefault(e);
 
-  button.style.padding = "0";
-  button.style.margin = "0";
-
-  // empêche propagation
-  L.DomEvent
-    .disableClickPropagation(div);
-
-  // clic bouton
-  L.DomEvent.on(
-    button,
-    'click',
-    function (e) {
-
-      L.DomEvent.preventDefault(e);
-
-      map.flyTo(
-        initialCenter,
-        initialZoom,
-        {
-          duration: 1.5
-        }
-      );
-
-    }
-  );
+    map.flyTo(initialCenter, initialZoom, { duration: 1.5 });
+  });
 
   return div;
 };
@@ -513,68 +306,71 @@ resetControl.onAdd = function () {
 resetControl.addTo(map);
 
 // ==============================
-// DEBUG COORDONNÉES
+// CLICK MAP (FIX FINAL)
 // ==============================
 
-map.on('click', function(e) {
+map.on('click', function (e) {
+
+  if (!e.latlng) return;
 
   const x = Math.round(e.latlng.lng);
   const y = Math.round(e.latlng.lat);
 
-  console.log("X :", x, "Y :", y);
+  console.log("X:", x, "Y:", y);
 
-  document.getElementById("coordX").value = x;
-  document.getElementById("coordY").value = y;
+  const xInput = document.getElementById("coordX");
+  const yInput = document.getElementById("coordY");
 
-  openModal();
+  if (xInput) xInput.value = x;
+  if (yInput) yInput.value = y;
+
+  if (typeof openModal === "function") {
+    openModal();
+  }
 });
 
 // ==============================
-// SIDEBAR MOBILE SLIDE
+// SIDEBAR SAFE
 // ==============================
 
-const sidebar =
-  document.getElementById("sidebar");
+const sidebar = document.getElementById("sidebar");
+const sidebarHandle = document.getElementById("sidebarHandle");
 
-const sidebarHandle =
-  document.getElementById("sidebarHandle");
+if (sidebar && sidebarHandle) {
 
-sidebarHandle.addEventListener("click", () => {
+  sidebarHandle.addEventListener("click", () => {
 
-  // ouvrir
-  if (sidebar.classList.contains("collapsed")) {
+    if (sidebar.classList.contains("collapsed")) {
+      sidebar.classList.remove("collapsed");
+      sidebar.classList.add("open");
+    } else {
+      sidebar.classList.remove("open");
+      sidebar.classList.add("collapsed");
+    }
 
-    sidebar.classList.remove("collapsed");
+  });
 
-    sidebar.classList.add("open");
-  }
-
-  // fermer
-  else {
-
-    sidebar.classList.remove("open");
-
-    sidebar.classList.add("collapsed");
-  }
-
-});
+}
 
 // ==============================
-// AJOUT MARKER (ouverture, fermeture et validation des données)
+// MODAL
 // ==============================
 
 function openModal() {
-  document.getElementById("markerModal").style.display = "block";
+  const modal = document.getElementById("markerModal");
+  if (modal) modal.style.display = "block";
 }
 
 function closeModal() {
-  document.getElementById("markerModal").style.display = "none";
+  const modal = document.getElementById("markerModal");
+  if (modal) modal.style.display = "none";
 }
 
 function addMarker() {
-  const name = document.getElementById("markerName").value;
-  const x = parseInt(document.getElementById("coordX").value);
-  const y = parseInt(document.getElementById("coordY").value);
+
+  const name = document.getElementById("markerName")?.value;
+  const x = parseInt(document.getElementById("coordX")?.value);
+  const y = parseInt(document.getElementById("coordY")?.value);
 
   if (!name || isNaN(x) || isNaN(y)) {
     alert("Remplis tous les champs !");
