@@ -437,15 +437,15 @@ h1 {
 }
 
 #addMarkerBtn {
+  #addMarkerBtn {
   position: fixed;
   bottom: 20px;
   left: 20px;
-
-  z-index: 9999;
-
-  padding: 10px 15px;
-  background: #ff9800;
+  z-index: 99999;
+  background: red;
   color: white;
+  padding: 10px;
+}
 
   border: none;
   border-radius: 8px;
