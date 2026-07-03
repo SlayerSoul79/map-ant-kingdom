@@ -352,6 +352,16 @@ if (sidebar && sidebarHandle) {
 // MODAL
 // ==============================
 
+function openModal() {
+  const modal = document.getElementById("markerModal");
+  if (modal) modal.style.display = "flex";
+}
+
+function closeModal() {
+  const modal = document.getElementById("markerModal");
+  if (modal) modal.style.display = "none";
+}
+
 function addMarker() {
 
   const name = document.getElementById("markerName").value;
@@ -363,9 +373,7 @@ function addMarker() {
     return;
   }
 
-  const leafletCoords = [y, x];
-
-  const marker = L.marker(leafletCoords, {
+  const marker = L.marker([y, x], {
     icon: customIcon
   });
 
@@ -379,17 +387,9 @@ function addMarker() {
 
   markerCluster.addLayer(marker);
 
-  closeModal(); // 👈 important
+  closeModal();
 
-  // reset champs
   document.getElementById("markerName").value = "";
   document.getElementById("coordX").value = "";
   document.getElementById("coordY").value = "";
-}
-function openModal() {
-  document.getElementById("markerModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("markerModal").style.display = "none";
 }
