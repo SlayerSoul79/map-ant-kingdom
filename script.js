@@ -354,7 +354,6 @@ if (sidebar && sidebarHandle) {
 
 function addMarker() {
 
-
   const name = document.getElementById("markerName").value;
   const x = parseInt(document.getElementById("coordX").value);
   const y = parseInt(document.getElementById("coordY").value);
@@ -380,16 +379,11 @@ function addMarker() {
 
   markerCluster.addLayer(marker);
 
- function openModal() {
-  document.getElementById("markerModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("markerModal").style.display = "none";
-}
+  closeModal(); // 👈 important
 
   // reset champs
   document.getElementById("markerName").value = "";
   document.getElementById("coordX").value = "";
   document.getElementById("coordY").value = "";
+}
 }
