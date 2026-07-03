@@ -26,6 +26,44 @@
 
 </head>
 
+// ==============================
+// FENETRE AJOUT MARKER
+// ==============================
+
+<div id="markerModal">
+
+  <div id="markerBox">
+
+    <h2>Ajouter un nouveau marker</h2>
+
+    <label>Nom du marker :</label>
+    <input type="text" id="markerName" placeholder="Nom..." />
+
+    <h3>Insérez les coordonnées :</h3>
+
+    <label>X :</label>
+    <input type="number" id="markerX" min="0" max="1200" />
+
+    <label>Y :</label>
+    <input type="number" id="markerY" min="0" max="1200" />
+
+    <h3>Code généré :</h3>
+
+    <pre id="generatedCode"></pre>
+
+    <div id="markerButtons">
+
+      <button id="cancelMarkerBtn">Annuler</button>
+
+      <button id="copyCodeBtn">📋 Copier le code</button>
+
+      <button id="addMarkerBtn">Ajouter</button>
+
+    </div>
+
+  </div>
+
+</div>
 <body>
 
 <h1>Interactive map - 1157</h1>

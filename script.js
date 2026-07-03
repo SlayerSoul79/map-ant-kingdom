@@ -690,3 +690,357 @@ sidebarHandle.addEventListener("click", () => {
   }
 
 });
+// ==============================
+// SYSTEME AJOUT MARKER
+// ==============================
+
+// Bouton + Leaflet (en bas à droite)
+const addMarkerControl = L.control({
+  position: "bottomright"
+});
+
+addMarkerControl.onAdd = function () {
+
+  const div = L.DomUtil.create(
+    "div",
+    "leaflet-bar leaflet-control"
+  );
+
+  const button = L.DomUtil.create("a", "", div);
+
+  button.href = "#";
+  button.title = "Ajouter un marker";
+
+  button.innerHTML = "+";
+
+  button.style.width = "60px";
+  button.style.height = "60px";
+
+  button.style.fontSize = "34px";
+  button.style.fontWeight = "bold";
+
+  button.style.display = "flex";
+  button.style.alignItems = "center";
+  button.style.justifyContent = "center";
+
+  button.style.background = "#ff9800";
+  button.style.color = "white";
+
+  button.style.textDecoration = "none";
+
+  L.DomEvent.disableClickPropagation(div);
+
+  L.DomEvent.on(button, "click", function (e) {
+
+    L.DomEvent.preventDefault(e);
+
+    document.getElementById("markerModal").style.display = "flex";
+
+  });
+
+  return div;
+};
+
+addMarkerControl.addTo(map);
+
+// ==============================
+// VARIABLES FENETRE
+// ==============================
+
+const markerModal =
+  document.getElementById("markerModal");
+
+const markerName =
+  document.getElementById("markerName");
+
+const markerX =
+  document.getElementById("markerX");
+
+const markerY =
+  document.getElementById("markerY");
+
+const addMarkerBtn =
+  document.getElementById("addMarkerBtn");
+
+const cancelMarkerBtn =
+  document.getElementById("cancelMarkerBtn");
+
+const copyCodeBtn =
+  document.getElementById("copyCodeBtn");
+
+const generatedCode =
+  document.getElementById("generatedCode");
+
+// marqueur temporaire (cercle rouge)
+let tempMarker = null;
+
+// coordonnées virtuelles actuelles
+let currentVirtualX = null;
+let currentVirtualY = null;
+
+// ==============================
+// FERMER FENETRE
+// ==============================
+
+cancelMarkerBtn.addEventListener("click", () => {
+
+  markerModal.style.display = "none";
+
+  markerName.value = "";
+  markerX.value = "";
+  markerY.value = "";
+
+  generatedCode.textContent = "";
+
+  if (tempMarker) {
+    map.removeLayer(tempMarker);
+    tempMarker = null;
+  }
+
+  currentVirtualX = null;
+  currentVirtualY = null;
+
+});
+
+// ==============================
+// CONVERSION CARTE -> COORDONNEES VIRTUELLES (0 - 1200)
+// ==============================
+
+// IMPORTANT : on se base sur ton image 2560 x 1920
+// et on convertit vers un repère 1200 x 1200
+
+const VIRTUAL_SIZE = 1200;
+
+function toVirtualCoords(lat, lng) {
+
+  const x = Math.round((lng / 2560) * VIRTUAL_SIZE);
+  const y = Math.round((lat / 1920) * VIRTUAL_SIZE);
+
+  return { x, y };
+}
+
+// ==============================
+// CLIC SUR LA CARTE
+// ==============================
+
+map.on("click", function (e) {
+
+  // coordonnées virtuelles
+  const coords = toVirtualCoords(
+    e.latlng.lat,
+    e.latlng.lng
+  );
+
+  currentVirtualX = coords.x;
+  currentVirtualY = coords.y;
+
+  // remplir inputs
+  markerX.value = coords.x;
+  markerY.value = coords.y;
+
+  // supprimer ancien marker temporaire
+  if (tempMarker) {
+    map.removeLayer(tempMarker);
+  }
+
+  // créer marker temporaire (cercle rouge)
+  tempMarker = L.circleMarker(e.latlng, {
+    radius: 8,
+    color: "red",
+    fillColor: "red",
+    fillOpacity: 0.8
+  }).addTo(map);
+
+});
+
+// ==============================
+// TABLEAUX EXISTANTS (compatibilité)
+// ==============================
+
+// on réutilise tes listes existantes
+const topList = document.getElementById("topList");
+const bottomList = document.getElementById("bottomList");
+const leftList = document.getElementById("leftList");
+const rightList = document.getElementById("rightList");
+
+// stockage global (recherche)
+const allMarkersAdd = [];
+
+// ==============================
+// DETERMINER CATEGORIE (même logique que ton code)
+// ==============================
+
+function getCategory(x, y) {
+
+  const center = 600;
+
+  const dx = x - center;
+  const dy = y - center;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return dx > 0 ? "right" : "left";
+  }
+
+  return dy > 0 ? "bottom" : "top";
+}
+
+// ==============================
+// AJOUT FINAL DU MARKER
+// ==============================
+
+function addFinalMarker() {
+
+  const name = markerName.value.trim();
+  const x = parseInt(markerX.value);
+  const y = parseInt(markerY.value);
+
+  if (!name || isNaN(x) || isNaN(y)) return;
+
+  // conversion inverse virtuel -> map
+  const lat = (y / 1200) * 1920;
+  const lng = (x / 1200) * 2560;
+
+  const leafletCoords = [lat, lng];
+
+  // marker définitif (marker.png)
+  const marker = L.marker(leafletCoords, {
+    icon: customIcon
+  });
+
+  markerCluster.addLayer(marker);
+
+  // popup
+  marker.bindPopup(`
+    <div class="popup">
+      <h3>${name}</h3>
+      <p>X : ${x}</p>
+      <p>Y : ${y}</p>
+    </div>
+  `);
+
+  // focus
+  marker.on("click", () => {
+    map.flyTo(leafletCoords, 1, { duration: 1.5 });
+  });
+
+  // catégorie
+  const category = getCategory(x, y);
+
+  const li = document.createElement("li");
+  li.textContent = name;
+
+  li.onclick = () => {
+    map.flyTo(leafletCoords, 1, { duration: 1.5 });
+    marker.openPopup();
+  };
+
+  // ajout liste
+  if (category === "top") topList.appendChild(li);
+  if (category === "bottom") bottomList.appendChild(li);
+  if (category === "left") leftList.appendChild(li);
+  if (category === "right") rightList.appendChild(li);
+
+  // stockage recherche
+  allMarkersAdd.push({
+    name: name.toLowerCase(),
+    marker,
+    li
+  });
+
+  // reset temp marker
+  if (tempMarker) {
+    map.removeLayer(tempMarker);
+    tempMarker = null;
+  }
+
+  markerModal.style.display = "none";
+
+  markerName.value = "";
+  markerX.value = "";
+  markerY.value = "";
+}
+
+// bouton ajouter
+addMarkerBtn.addEventListener("click", addFinalMarker);
+
+// ==============================
+// GENERATION DU CODE A COPIER
+// ==============================
+
+function updateGeneratedCode() {
+
+  const name = markerName.value.trim();
+  const x = markerX.value;
+  const y = markerY.value;
+
+  if (!name || !x || !y) {
+    generatedCode.textContent = "";
+    return;
+  }
+
+  const code = `{
+    name: "${name}",
+    x: ${x},
+    y: ${y}
+},`;
+
+  generatedCode.textContent = code;
+}
+
+// mise à jour automatique
+markerName.addEventListener("input", updateGeneratedCode);
+markerX.addEventListener("input", updateGeneratedCode);
+markerY.addEventListener("input", updateGeneratedCode);
+
+// ==============================
+// COPIER LE CODE 📋
+// ==============================
+
+copyCodeBtn.addEventListener("click", async () => {
+
+  const text = generatedCode.textContent;
+
+  if (!text) return;
+
+  try {
+
+    await navigator.clipboard.writeText(text);
+
+    copyCodeBtn.innerText = "Copié ✔";
+
+    setTimeout(() => {
+      copyCodeBtn.innerText = "📋 Copier le code";
+    }, 1500);
+
+  } catch (err) {
+
+    console.log("Erreur copie :", err);
+
+  }
+
+});
+
+// ==============================
+// AUTO UPDATE SI CLIC CARTE
+// ==============================
+
+map.on("click", () => {
+
+  updateGeneratedCode();
+
+});
+
+// ==============================
+// SECURITE INPUTS
+// ==============================
+
+// limite 0 - 1200
+markerX.addEventListener("input", () => {
+  if (markerX.value > 1200) markerX.value = 1200;
+  if (markerX.value < 0) markerX.value = 0;
+});
+
+markerY.addEventListener("input", () => {
+  if (markerY.value > 1200) markerY.value = 1200;
+  if (markerY.value < 0) markerY.value = 0;
+});
