@@ -2,19 +2,28 @@
 <html lang="fr">
 
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
   <title>Carte The Ant Underground Kingdom</title>
 
   <!-- LEAFLET -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <!-- MARKER CLUSTER -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
 
   <!-- TON CSS -->
   <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -26,37 +35,65 @@
   <!-- MAP -->
   <div id="map"></div>
 
-  <!-- SIDEBAR -->
-  <div id="sidebar" class="collapsed">
+ <div id="sidebar" class="collapsed">
 
-    <div id="sidebarHandle">
-      <div id="sidebarBar"></div>
-    </div>
-
+  <div id="sidebarHandle">
+    <div id="sidebarBar"></div>
+  </div>
     <h2>Inactive ant colonies</h2>
 
-    <input type="text" id="searchInput" placeholder="Search colony...">
+    <!-- SEARCH -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search colony..."
+    >
 
+    <!-- LIST -->
     <div id="locationList">
 
+      <!-- HAUT -->
       <div class="category">
-        <h3 class="categoryTitle">Haut</h3>
+
+        <h3 class="categoryTitle">
+          Haut
+        </h3>
+
         <ul id="topList"></ul>
+
       </div>
 
+      <!-- BAS -->
       <div class="category">
-        <h3 class="categoryTitle">Bas</h3>
+
+        <h3 class="categoryTitle">
+          Bas
+        </h3>
+
         <ul id="bottomList"></ul>
+
       </div>
 
+      <!-- GAUCHE -->
       <div class="category">
-        <h3 class="categoryTitle">Gauche</h3>
+
+        <h3 class="categoryTitle">
+          Gauche
+        </h3>
+
         <ul id="leftList"></ul>
+
       </div>
 
+      <!-- DROITE -->
       <div class="category">
-        <h3 class="categoryTitle">Droite</h3>
+
+        <h3 class="categoryTitle">
+          Droite
+        </h3>
+
         <ul id="rightList"></ul>
+
       </div>
 
     </div>
@@ -65,40 +102,35 @@
 
 </div>
 
-<!-- ===================== -->
-<!-- MODAL AJOUT MARKER -->
-<!-- ===================== -->
 <div id="markerModal" class="modal">
+  <div class="modal-content">
 
-  <div class="modalBox">
-
-    <h2>Ajoutez un nouveau marker</h2>
+    <h2>Ajouter un nouveau marker</h2>
 
     <label>Nom du marker :</label>
-    <input type="text" id="markerName" placeholder="Nom..." />
+    <input type="text" id="markerName" placeholder="Ex: zone de spawn">
 
     <h3>Insérez les coordonnées :</h3>
 
-    <label>X (0 - 1200)</label>
-    <input type="number" id="markerX" min="0" max="1200" />
+    <label>X :</label>
+    <input type="number" id="coordX" min="0" max="1200">
 
-    <label>Y (0 - 1200)</label>
-    <input type="number" id="markerY" min="0" max="1200" />
+    <label>Y :</label>
+    <input type="number" id="coordY" min="0" max="1200">
 
-    <div class="modalButtons">
-      <button id="cancelMarker">Annuler</button>
-      <button id="addMarker">Ajouter</button>
-    </div>
+    <button onclick="addMarker()">Ajouter</button>
+    <button onclick="closeModal()">Annuler</button>
 
   </div>
-
 </div>
 
-<!-- ===================== -->
-<!-- SCRIPTS -->
-<!-- ===================== -->
+<!-- LEAFLET -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- MARKER CLUSTER -->
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<!-- TON JS -->
 <script src="script.js"></script>
 
 </body>
