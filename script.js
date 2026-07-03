@@ -354,6 +354,7 @@ if (sidebar && sidebarHandle) {
 
 function addMarker() {
 
+
   const name = document.getElementById("markerName").value;
   const x = parseInt(document.getElementById("coordX").value);
   const y = parseInt(document.getElementById("coordY").value);
