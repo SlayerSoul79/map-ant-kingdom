@@ -35,65 +35,41 @@
   <!-- MAP -->
   <div id="map"></div>
 
- <div id="sidebar" class="collapsed">
+  <!-- SIDEBAR -->
+  <div id="sidebar" class="collapsed">
 
-  <div id="sidebarHandle">
-    <div id="sidebarBar"></div>
-  </div>
+    <div id="sidebarHandle">
+      <div id="sidebarBar"></div>
+    </div>
+
     <h2>Inactive ant colonies</h2>
 
-    <!-- SEARCH -->
     <input
       type="text"
       id="searchInput"
       placeholder="Search colony..."
     >
 
-    <!-- LIST -->
     <div id="locationList">
 
-      <!-- HAUT -->
       <div class="category">
-
-        <h3 class="categoryTitle">
-          Haut
-        </h3>
-
+        <h3 class="categoryTitle">Haut</h3>
         <ul id="topList"></ul>
-
       </div>
 
-      <!-- BAS -->
       <div class="category">
-
-        <h3 class="categoryTitle">
-          Bas
-        </h3>
-
+        <h3 class="categoryTitle">Bas</h3>
         <ul id="bottomList"></ul>
-
       </div>
 
-      <!-- GAUCHE -->
       <div class="category">
-
-        <h3 class="categoryTitle">
-          Gauche
-        </h3>
-
+        <h3 class="categoryTitle">Gauche</h3>
         <ul id="leftList"></ul>
-
       </div>
 
-      <!-- DROITE -->
       <div class="category">
-
-        <h3 class="categoryTitle">
-          Droite
-        </h3>
-
+        <h3 class="categoryTitle">Droite</h3>
         <ul id="rightList"></ul>
-
       </div>
 
     </div>
@@ -102,18 +78,9 @@
 
 </div>
 
-<!-- LEAFLET -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<!-- MARKER CLUSTER -->
-<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-
-<!-- TON JS -->
-<script src="script.js"></script>
-
-// ==============================
-// FENETRE AJOUT MARKER
-// ==============================
+<!-- ============================== -->
+<!-- FENETRE AJOUT MARKER -->
+<!-- ============================== -->
 
 <div id="markerModal">
 
@@ -139,9 +106,7 @@
     <div id="markerButtons">
 
       <button id="cancelMarkerBtn">Annuler</button>
-
       <button id="copyCodeBtn">📋 Copier le code</button>
-
       <button id="addMarkerBtn">Ajouter</button>
 
     </div>
@@ -149,5 +114,13 @@
   </div>
 
 </div>
+
+<!-- SCRIPTS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<!-- TON JS -->
+<script src="script.js"></script>
+
 </body>
 </html>

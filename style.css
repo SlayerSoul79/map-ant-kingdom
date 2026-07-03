@@ -423,7 +423,16 @@ h1 {
 
 
 /* ============================== */
-/* BOUTON AJOUT MARKER (LEAFLET override) */
+/* FIX GLOBAL LEAFLET Z-INDEX */
+/* ============================== */
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1000 !important;
+}
+
+/* ============================== */
+/* BOUTON AJOUT MARKER */
 /* ============================== */
 
 .leaflet-control a {
@@ -445,26 +454,24 @@ h1 {
   justify-content: center;
 
   border-radius: 6px;
+
+  cursor: pointer;
 }
 
-/* hover bouton + */
+/* hover */
 .leaflet-control a[title="Ajouter un marker"]:hover {
   background: #ffb74d !important;
 }
 
 /* ============================== */
-/* MODAL BACKGROUND */
+/* MODAL BACKGROUND (FIX PROPRE) */
 /* ============================== */
 
 #markerModal {
   display: none;
 
   position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
+  inset: 0;
 
   background: rgba(0, 0, 0, 0.7);
 
@@ -472,6 +479,14 @@ h1 {
 
   justify-content: center;
   align-items: center;
+
+  pointer-events: none;
+}
+
+/* actif */
+#markerModal.active {
+  display: flex;
+  pointer-events: all;
 }
 
 /* ============================== */
@@ -500,7 +515,7 @@ h1 {
   font-size: 18px;
 }
 
-/* sous titres */
+/* sous-titres */
 #markerBox h3 {
   margin: 10px 0 5px 0;
   font-size: 14px;
@@ -611,13 +626,23 @@ h1 {
 }
 
 /* ============================== */
-/* RESPONSIVE */
+/* RESPONSIVE MODAL */
 /* ============================== */
 
 @media (max-width: 500px) {
-
   #markerBox {
     width: 90%;
   }
+}
 
+/* ============================== */
+/* BOUTON LEAFLET MOBILE FIX */
+/* ============================== */
+
+@media (max-width: 768px) {
+  .leaflet-control a[title="Ajouter un marker"] {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 28px !important;
+  }
 }
