@@ -437,18 +437,24 @@ h1 {
 }
 
 #addMarkerBtn {
-  #addMarkerBtn {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  z-index: 99999;
-  background: red;
+
+  z-index: 999999;
+
+  background: #ff9800;
   color: white;
-  padding: 10px;
-}
+
+  padding: 12px 16px;
+  border-radius: 10px;
 
   border: none;
-  border-radius: 8px;
-
   cursor: pointer;
+}
+
+/* IMPORTANT : force la map à rester en dessous */
+#map {
+  z-index: 1;
+  position: relative;
 }
