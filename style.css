@@ -211,8 +211,8 @@ h1 {
 
 .modal {
   display: none;
-  position: fixed;
-  inset: 0;
+  align-items: center;
+  justify-content: center;  
 
   background: rgba(0, 0, 0, 0.6);
   z-index: 99999999;
@@ -221,22 +221,12 @@ h1 {
   align-items: center;
 }
 
-.modal.show {
-  display: flex;
-}
-
 .modal-content {
   background: white;
   color: black;
-
   padding: 20px;
   width: 320px;
-
   border-radius: 10px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 /* inputs propres */
