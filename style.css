@@ -224,11 +224,6 @@ h1 {
 
 /* boîte centrée */
 .modal-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
   background: white;
   color: black;
 
@@ -236,6 +231,29 @@ h1 {
   width: 320px;
 
   border-radius: 10px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.modal-content button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+/* Chrome / Edge / Safari */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 /* ============================= */
