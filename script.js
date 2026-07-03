@@ -107,6 +107,64 @@ const playableZone = [
 ];
 
 // ==============================
+// SYSTÈME DE COORDONNÉES 1200x1200
+// ==============================
+//
+// Haut     = X:0    Y:0
+// Droite   = X:0    Y:1200
+// Bas      = X:1200 Y:1200
+// Gauche   = X:1200 Y:0
+//
+
+const virtualSize = 1200;
+
+const topPoint = {
+  x: 1280,
+  y: 25
+};
+
+const rightPoint = {
+  x: 2420,
+  y: 960
+};
+
+const bottomPoint = {
+  x: 1285,
+  y: 1885
+};
+
+const leftPoint = {
+  x: 140,
+  y: 960
+};
+
+// ==============================
+// CONVERSION COORDONNÉES
+// ==============================
+
+function virtualToMap(x, y) {
+
+  const u = y / virtualSize;
+  const v = x / virtualSize;
+
+  const mapX =
+      topPoint.x
+    + u * (rightPoint.x - topPoint.x)
+    + v * (leftPoint.x - topPoint.x);
+
+  const mapY =
+      topPoint.y
+    + u * (rightPoint.y - topPoint.y)
+    + v * (leftPoint.y - topPoint.y);
+
+  return {
+    x: mapX,
+    y: mapY
+  };
+
+}
+
+// ==============================
 // TEST SI POINT DANS ZONE
 // ==============================
 
@@ -138,9 +196,11 @@ function isInsideZone(x, y) {
 
     if (intersect)
       inside = !inside;
+
   }
 
   return inside;
+
 }
 
 // ==============================
@@ -160,13 +220,14 @@ function getCategory(x, y) {
     return dx > 0
       ? "right"
       : "left";
+
   }
 
   return dy > 0
     ? "bottom"
     : "top";
-}
 
+}
 // ==============================
 // TABLEAU MARKERS PAR CATÉGORIE
 // ==============================
@@ -183,31 +244,46 @@ const categoryMarkers = {
 // ==============================
 // LOCATIONS
 // ==============================
+//
+// Les coordonnées sont maintenant
+// dans le repère virtuel 1200x1200.
+//
+// Haut     = X:0    Y:0
+// Droite   = X:0    Y:1200
+// Bas      = X:1200 Y:1200
+// Gauche   = X:1200 Y:0
+//
 
 const locations = [
 
   {
-    name: "Alpha",
-    x: 1280,
-    y: 960
+    name: "Centre",
+    x: 600,
+    y: 600
   },
 
   {
-    name: "Beta",
-    x: 1000,
-    y: 700
+    name: "Coin haut",
+    x: 0,
+    y: 0
   },
 
   {
-    name: "Gamma",
-    x: 1600,
+    name: "Coin droit",
+    x: 0,
     y: 1200
   },
 
   {
-    name: "Delta",
-    x: 1400,
-    y: 900
+    name: "Coin bas",
+    x: 1200,
+    y: 1200
+  },
+
+  {
+    name: "Coin gauche",
+    x: 1200,
+    y: 0
   }
 
 ];
@@ -232,19 +308,31 @@ const allMarkers = [];
 
 locations.forEach(loc => {
 
-  const x = loc.x;
-  const y = loc.y;
+  // coordonnées virtuelles
+  const virtualX = loc.x;
+  const virtualY = loc.y;
+
+  // conversion vers la carte
+  const mapPos =
+    virtualToMap(virtualX, virtualY);
+
+  const x = mapPos.x;
+  const y = mapPos.y;
 
   // filtre zone
-  if (!isInsideZone(x, y)) return;
+  if (!isInsideZone(x, y))
+    return;
 
   // coordonnées leaflet
   const leafletCoords = [y, x];
 
   // création marker
-  const marker = L.marker(leafletCoords, {
-    icon: customIcon
-  });
+  const marker = L.marker(
+    leafletCoords,
+    {
+      icon: customIcon
+    }
+  );
 
   markerCluster.addLayer(marker);
 
@@ -252,17 +340,21 @@ locations.forEach(loc => {
   marker.bindPopup(`
     <div class="popup">
       <h3>${loc.name}</h3>
-      <p>X : ${x}</p>
-      <p>Y : ${y}</p>
+      <p>X : ${virtualX}</p>
+      <p>Y : ${virtualY}</p>
     </div>
   `);
 
   // focus marker
   function focusMarker() {
 
-    map.flyTo(leafletCoords, 1, {
-      duration: 1.5
-    });
+    map.flyTo(
+      leafletCoords,
+      1,
+      {
+        duration: 1.5
+      }
+    );
 
     setTimeout(() => {
 
@@ -273,10 +365,14 @@ locations.forEach(loc => {
   }
 
   // clic marker
-  marker.on('click', focusMarker);
+  marker.on(
+    'click',
+    focusMarker
+  );
 
   // élément liste
-  const li = document.createElement("li");
+  const li =
+    document.createElement("li");
 
   li.textContent = loc.name;
 
@@ -291,6 +387,7 @@ locations.forEach(loc => {
     getCategory(x, y);
 
   // ajout liste catégorie
+
   if (category === "top") {
 
     topList.appendChild(li);
@@ -333,7 +430,6 @@ locations.forEach(loc => {
   });
 
 });
-
 // ==============================
 // SEARCH
 // ==============================
@@ -511,6 +607,36 @@ resetControl.onAdd = function () {
 };
 
 resetControl.addTo(map);
+// ==============================
+// CONVERSION CARTE -> COORDONNÉES VIRTUELLES
+// ==============================
+
+function mapToVirtual(mapX, mapY) {
+
+  // Vecteurs du losange
+  const ax = rightPoint.x - topPoint.x;
+  const ay = rightPoint.y - topPoint.y;
+
+  const bx = leftPoint.x - topPoint.x;
+  const by = leftPoint.y - topPoint.y;
+
+  // Résolution du système
+  const det = ax * by - ay * bx;
+
+  const dx = mapX - topPoint.x;
+  const dy = mapY - topPoint.y;
+
+  const u = (dx * by - dy * bx) / det;
+  const v = (ax * dy - ay * dx) / det;
+
+  return {
+
+    x: Math.round(v * virtualSize),
+    y: Math.round(u * virtualSize)
+
+  };
+
+}
 
 // ==============================
 // DEBUG COORDONNÉES
@@ -518,12 +644,21 @@ resetControl.addTo(map);
 
 map.on('click', function(e) {
 
-  console.log(
-    "X :", Math.round(e.latlng.lng),
-    "Y :", Math.round(e.latlng.lat)
+  const coords = mapToVirtual(
+    e.latlng.lng,
+    e.latlng.lat
   );
 
+  console.clear();
+
+  console.log("----------------------------");
+  console.log("Coordonnées virtuelles");
+  console.log("X :", coords.x);
+  console.log("Y :", coords.y);
+  console.log("----------------------------");
+
 });
+
 // ==============================
 // SIDEBAR MOBILE SLIDE
 // ==============================
@@ -542,6 +677,7 @@ sidebarHandle.addEventListener("click", () => {
     sidebar.classList.remove("collapsed");
 
     sidebar.classList.add("open");
+
   }
 
   // fermer
@@ -550,6 +686,7 @@ sidebarHandle.addEventListener("click", () => {
     sidebar.classList.remove("open");
 
     sidebar.classList.add("collapsed");
+
   }
 
 });
