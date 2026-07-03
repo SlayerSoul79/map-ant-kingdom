@@ -1,30 +1,20 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carte The Ant Underground Kingdom</title>
 
   <!-- LEAFLET -->
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <!-- MARKER CLUSTER -->
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
-
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
 
   <!-- TON CSS -->
   <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
@@ -45,11 +35,7 @@
 
     <h2>Inactive ant colonies</h2>
 
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Search colony..."
-    >
+    <input type="text" id="searchInput" placeholder="Search colony...">
 
     <div id="locationList">
 
@@ -79,74 +65,41 @@
 
 </div>
 
-<!-- ============================= -->
-<!-- FENÊTRE AJOUT MARKER -->
-<!-- ============================= -->
+<!-- ===================== -->
+<!-- MODAL AJOUT MARKER -->
+<!-- ===================== -->
+<div id="markerModal" class="modal">
 
-<div id="markerModal">
+  <div class="modalBox">
 
-  <div id="markerBox">
+    <h2>Ajoutez un nouveau marker</h2>
 
-    <h2>Ajouter un nouveau marker</h2>
-
-    <label for="markerName">Nom du marker :</label>
-    <input
-      type="text"
-      id="markerName"
-      placeholder="Nom..."
-    />
+    <label>Nom du marker :</label>
+    <input type="text" id="markerName" placeholder="Nom..." />
 
     <h3>Insérez les coordonnées :</h3>
 
-    <label for="markerX">X :</label>
-    <input
-      type="number"
-      id="markerX"
-      min="0"
-      max="1200"
-    />
+    <label>X (0 - 1200)</label>
+    <input type="number" id="markerX" min="0" max="1200" />
 
-    <label for="markerY">Y :</label>
-    <input
-      type="number"
-      id="markerY"
-      min="0"
-      max="1200"
-    />
+    <label>Y (0 - 1200)</label>
+    <input type="number" id="markerY" min="0" max="1200" />
 
-    <h3>Code généré :</h3>
-
-    <pre id="generatedCode"></pre>
-
-    <div id="markerButtons">
-
-      <button type="button" id="cancelMarkerBtn">
-        Annuler
-      </button>
-
-      <button type="button" id="copyCodeBtn">
-        📋 Copier le code
-      </button>
-
-      <button type="button" id="addMarkerBtn">
-        Ajouter
-      </button>
-
+    <div class="modalButtons">
+      <button id="cancelMarker">Annuler</button>
+      <button id="addMarker">Ajouter</button>
     </div>
 
   </div>
 
 </div>
 
-<!-- LEAFLET -->
+<!-- ===================== -->
+<!-- SCRIPTS -->
+<!-- ===================== -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<!-- MARKER CLUSTER -->
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-
-<!-- TON SCRIPT -->
 <script src="script.js"></script>
 
 </body>
 </html>
-```

@@ -1,5 +1,5 @@
 // ======================================================
-// CARTE INTERACTIVE - VERSION PROPRE STABLE
+// CARTE INTERACTIVE - VERSION STABLE CORRIGÉE
 // ======================================================
 
 // ==============================
@@ -61,11 +61,9 @@ const markerModal = document.getElementById("markerModal");
 const markerName = document.getElementById("markerName");
 const markerX = document.getElementById("markerX");
 const markerY = document.getElementById("markerY");
-const generatedCode = document.getElementById("generatedCode");
 
-const addMarkerBtn = document.getElementById("addMarkerBtn");
-const cancelMarkerBtn = document.getElementById("cancelMarkerBtn");
-const copyCodeBtn = document.getElementById("copyCodeBtn");
+const addMarkerBtn = document.getElementById("addMarker");
+const cancelMarkerBtn = document.getElementById("cancelMarker");
 
 // ==============================
 // DATA
@@ -97,7 +95,6 @@ let tempCircle = null;
 // ==============================
 
 function virtualToMap(x, y) {
-
     const u = y / VIRTUAL;
     const v = x / VIRTUAL;
 
@@ -108,7 +105,6 @@ function virtualToMap(x, y) {
 }
 
 function mapToVirtual(x, y) {
-
     const ax = rightPoint.x - topPoint.x;
     const ay = rightPoint.y - topPoint.y;
 
@@ -134,19 +130,17 @@ function mapToVirtual(x, y) {
 // ==============================
 
 function getCategory(x, y) {
-
     const dx = x - centerX;
     const dy = y - centerY;
 
     if (Math.abs(dx) > Math.abs(dy)) {
         return dx > 0 ? "right" : "left";
     }
-
     return dy > 0 ? "bottom" : "top";
 }
 
 // ==============================
-// CREATE MARKER (UNIQUE SYSTEM)
+// CREATE MARKER
 // ==============================
 
 function createMarker(name, x, y) {
@@ -166,10 +160,10 @@ function createMarker(name, x, y) {
 
     markerCluster.addLayer(marker);
 
-    function focus() {
+    const focus = () => {
         map.flyTo(coords, 1, { duration: 1.5 });
         setTimeout(() => marker.openPopup(), 600);
-    }
+    };
 
     marker.on("click", focus);
 
@@ -186,11 +180,15 @@ function createMarker(name, x, y) {
 
     categoryMarkers[cat].push(marker);
 
-    allMarkers.push({ name: name.toLowerCase(), marker, li });
+    allMarkers.push({
+        name: name.toLowerCase(),
+        marker,
+        li
+    });
 }
 
 // ==============================
-// DEFAULT MARKERS
+// MARKERS PAR DÉFAUT
 // ==============================
 
 [
@@ -207,11 +205,11 @@ function createMarker(name, x, y) {
 
 searchInput.addEventListener("input", () => {
 
-    const v = searchInput.value.toLowerCase();
+    const value = searchInput.value.toLowerCase();
 
     allMarkers.forEach(m => {
 
-        const match = m.name.includes(v);
+        const match = m.name.includes(value);
 
         m.li.style.display = match ? "block" : "none";
 
@@ -221,13 +219,19 @@ searchInput.addEventListener("input", () => {
 });
 
 // ==============================
-// MODAL OPEN
+// OUVERTURE MODAL (FIX PROPRE)
 // ==============================
 
-document.querySelector(".leaflet-control a[title='Ajouter un marker']")
-?.addEventListener("click", () => {
-    markerModal.classList.add("active");
-});
+setTimeout(() => {
+
+    document.querySelector("a[title='Ajouter un marker']")
+    ?.addEventListener("click", (e) => {
+
+        e.preventDefault();
+        markerModal.classList.add("active");
+    });
+
+}, 500);
 
 // ==============================
 // CLICK MAP
@@ -248,21 +252,19 @@ map.on("click", e => {
         fillColor: "red",
         fillOpacity: 1
     }).addTo(map);
-
-    updateCode();
 });
 
 // ==============================
-// ADD MARKER
+// AJOUT MARKER
 // ==============================
 
 function addMarker() {
 
     const name = markerName.value.trim();
-    const x = +markerX.value;
-    const y = +markerY.value;
+    const x = Number(markerX.value);
+    const y = Number(markerY.value);
 
-    if (!name) return;
+    if (!name || isNaN(x) || isNaN(y)) return;
 
     createMarker(name, x, y);
 
@@ -271,42 +273,14 @@ function addMarker() {
     markerName.value = "";
     markerX.value = "";
     markerY.value = "";
+
+    if (tempCircle) {
+        map.removeLayer(tempCircle);
+        tempCircle = null;
+    }
 }
 
 addMarkerBtn.addEventListener("click", addMarker);
-
-// ==============================
-// CODE GEN
-// ==============================
-
-function updateCode() {
-
-    const n = markerName.value;
-    const x = markerX.value;
-    const y = markerY.value;
-
-    if (!n || !x || !y) {
-        generatedCode.textContent = "";
-        return;
-    }
-
-    generatedCode.textContent = `{ name: "${n}", x: ${x}, y: ${y} },`;
-}
-
-// ==============================
-// COPY
-// ==============================
-
-copyCodeBtn.addEventListener("click", async () => {
-
-    await navigator.clipboard.writeText(generatedCode.textContent);
-
-    copyCodeBtn.textContent = "Copié ✔";
-
-    setTimeout(() => {
-        copyCodeBtn.textContent = "📋 Copier le code";
-    }, 1500);
-});
 
 // ==============================
 // CLOSE MODAL
