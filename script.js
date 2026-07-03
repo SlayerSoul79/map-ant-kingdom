@@ -386,4 +386,10 @@ function addMarker() {
   document.getElementById("coordX").value = "";
   document.getElementById("coordY").value = "";
 }
+function openModal() {
+  document.getElementById("markerModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("markerModal").style.display = "none";
 }
