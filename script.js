@@ -518,10 +518,18 @@ resetControl.addTo(map);
 
 map.on('click', function(e) {
 
-  console.log(
-    "X :", Math.round(e.latlng.lng),
-    "Y :", Math.round(e.latlng.lat)
-  );
+ map.on('click', function(e) {
+
+  const x = Math.round(e.latlng.lng);
+  const y = Math.round(e.latlng.lat);
+
+  console.log("X :", x, "Y :", y);
+
+  document.getElementById("coordX").value = x;
+  document.getElementById("coordY").value = y;
+
+  openModal();
+});
 
 });
 // ==============================
