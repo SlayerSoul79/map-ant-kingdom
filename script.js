@@ -380,7 +380,13 @@ function addMarker() {
 
   markerCluster.addLayer(marker);
 
-  closeModal();
+ function openModal() {
+  document.getElementById("markerModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("markerModal").style.display = "none";
+}
 
   // reset champs
   document.getElementById("markerName").value = "";
